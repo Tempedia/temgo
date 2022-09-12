@@ -9,8 +9,11 @@ from itemadapter import ItemAdapter
 import scrapy
 from scrapy.pipelines.images import ImagesPipeline
 from scrapy.exceptions import DropItem
+
+from .items import DownloadImageItem
 from . import settings
 import os
+
 
 class SpiderPipeline:
     def process_item(self, item, spider):
@@ -20,12 +23,19 @@ class SpiderPipeline:
 class MyImagesPipeline(ImagesPipeline):
 
     def get_media_requests(self, item, info):
-        if 'icon_url' in item and item['icon_url']:
-            yield scrapy.Request(item['icon_url'])
+        # if 'image_url' in item and item['image_url']:
+        #     yield scrapy.Request(item['image_url'])
+        for k, v in item.items():
+            if isinstance(v, DownloadImageItem):
+                yield scrapy.Request(v['image_url'], meta={'item': v})
 
     def item_completed(self, results, item, info):
-        for ok,x in results:
+        for ok, x in results:
             if ok:
-                item['icon']=os.path.join(settings.IMAGES_STORE, x['path'])
-                break
+                x['path'] = os.path.join(settings.IMAGES_STORE, x['path'])
+                for k, v in item.items():
+                    if isinstance(v, DownloadImageItem) and v['image_url'] == x['url']:
+                        item[k] = x
+                # item['image'] = os.path.join(settings.IMAGES_STORE, x['path'])
+                # break
         return item

@@ -4,18 +4,35 @@
 # https://docs.scrapy.org/en/latest/topics/items.html
 
 import scrapy
-
-
-class SpiderItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
-
+from scrapy.loader import ItemLoader
+from scrapy.loader.processors import TakeFirst
 
 
 class DownloadImageItem(scrapy.Item):
-    name=scrapy.Field()
-    icon_url = scrapy.Field()
+    image_url = scrapy.Field()
+    image = scrapy.Field()
+
+
+class TypeItem(scrapy.Item):
+    name = scrapy.Field()
     icon = scrapy.Field()
-    comment=scrapy.Field()
-    commentAuthor=scrapy.Field()
+    comment = scrapy.Field()
+    commentAuthor = scrapy.Field()
+    effectiveAgainst = scrapy.Field()
+    ineffectiveAgainst = scrapy.Field()
+    resistantTo = scrapy.Field()
+    weakTo = scrapy.Field()
+    trivia = scrapy.Field()
+
+
+class TemtemItem(scrapy.Item):
+    no = scrapy.Field()
+    name = scrapy.Field()
+    type = scrapy.Field()
+    genderRatio = scrapy.Field()
+    catchRate = scrapy.Field()
+    experienceYieldModifier = scrapy.Field()
+    normalIcon = scrapy.Field()
+    lumaIcon = scrapy.Field()
+    traits = scrapy.Field()
+    description = scrapy.Field()
