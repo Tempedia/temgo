@@ -1,7 +1,7 @@
 #!/usr/env python3
 
 import scrapy
-from ..items import DownloadImageItem, TemtemItem
+from ..items import DownloadFileItem, DownloadImageItem, TemtemItem
 from scrapy.exceptions import DropItem
 
 
@@ -54,14 +54,34 @@ class TypeSpider(scrapy.Spider):
             image_url=response.urljoin(normalIconSrc))
 
         lumaIconSrc = response.css(
-            '#ttw-temtem-luma > span:nth-child(1) > a:nth-child(1) > img:nth-child(1)::attr(src)').get().strip()
+            r'#ttw-temtem-luma > span:nth-child(1) > a:nth-child(1) > img:nth-child(1)::attr(src)').get().strip()
         lumaIcon = DownloadImageItem(image_url=response.urljoin(lumaIconSrc))
 
         description = {'Physical Appearance': '', 'Tempedia': ''}
         description['Physical Appearance'] = response.css(
-            '.mw-parser-output > h3:contains("Physical Appearance") + p::text').get()
+            r'.mw-parser-output > h3:contains("Physical Appearance") + p::text').get()
         description['Tempedia'] = response.css(
-            '.mw-parser-output > h3:contains("Tempedia") + p >i::text').get()
+            r'.mw-parser-output > h3:contains("Tempedia") + p >i::text').get()
+        
+        crySrc=response.css(r'tr.infobox-row th:contains("Cry") + td audio::attr(src)').get()
+        cry=DownloadFileItem(file_url=crySrc)
+
+        locations=[]
+        for a in response.css(r'tr.infobox-row th:contains("Locations") + td a'):
+            locations.append(a.css('::text').get())
+        
+        height=response.css(r'table.infobox-half-row tr:contains("Height") + tr td::text').get()
+        weight=response.css(r'table.infobox-half-row tr:contains("Weight") + tr td::text').get()
+
+        tvYield={}
+        tvYield['HP']=response.css(r'.tv-table > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(1)::text').get('').strip()
+        tvYield['STA']=response.css(r'.tv-table > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(2)::text').get('').strip()
+        tvYield['SPD']=response.css(r'.tv-table > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(3)::text').get('').strip()
+        tvYield['ATK']=response.css(r'.tv-table > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(4)::text').get('').strip()
+        tvYield['DEF']=response.css(r'.tv-table > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(5)::text').get('').strip()
+        tvYield['SPATK']=response.css(r'.tv-table > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(6)::text').get('').strip()
+        tvYield['SPDEF']=response.css(r'.tv-table > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(7)::text').get('').strip()
+
 
         yield TemtemItem(
             name=name,
@@ -74,4 +94,9 @@ class TypeSpider(scrapy.Spider):
             lumaIcon=lumaIcon,
             traits=traits,
             description=description,
+            cry=cry,
+            locations=locations,
+            height=height,
+            weight=weight,
+            tvYield=tvYield,
         )

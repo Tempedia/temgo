@@ -12,6 +12,9 @@ class DownloadImageItem(scrapy.Item):
     image_url = scrapy.Field()
     image = scrapy.Field()
 
+class DownloadFileItem(scrapy.Item):
+    file_url = scrapy.Field()
+    file = scrapy.Field()
 
 class TypeItem(scrapy.Item):
     name = scrapy.Field()
@@ -36,3 +39,8 @@ class TemtemItem(scrapy.Item):
     lumaIcon = scrapy.Field()
     traits = scrapy.Field()
     description = scrapy.Field()
+    cry=scrapy.Field()
+    locations=scrapy.Field()
+    height=scrapy.Field()
+    weight=scrapy.Field()
+    tvYield=scrapy.Field()

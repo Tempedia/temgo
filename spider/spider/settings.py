@@ -91,7 +91,9 @@ DEFAULT_REQUEST_HEADERS = {
 
 # 设置图片下载路径
 IMAGES_STORE=os.path.join(os.path.dirname(os.path.dirname(__file__)),'images')
+FILES_STORE=os.path.join(os.path.dirname(os.path.dirname(__file__)),'files')
+
 ITEM_PIPELINES = {
-    'scrapy.pipelines.images.ImagesPipeline': 2,
+    'spider.pipelines.MyFilesPipeline':2,
     'spider.pipelines.MyImagesPipeline':1,
 }

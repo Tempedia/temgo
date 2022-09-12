@@ -8,9 +8,10 @@
 from itemadapter import ItemAdapter
 import scrapy
 from scrapy.pipelines.images import ImagesPipeline
+from scrapy.pipelines.files import FilesPipeline
 from scrapy.exceptions import DropItem
 
-from .items import DownloadImageItem
+from .items import DownloadFileItem, DownloadImageItem
 from . import settings
 import os
 
@@ -27,7 +28,7 @@ class MyImagesPipeline(ImagesPipeline):
         #     yield scrapy.Request(item['image_url'])
         for k, v in item.items():
             if isinstance(v, DownloadImageItem):
-                yield scrapy.Request(v['image_url'], meta={'item': v})
+                yield scrapy.Request(v['image_url'])
 
     def item_completed(self, results, item, info):
         for ok, x in results:
@@ -38,4 +39,20 @@ class MyImagesPipeline(ImagesPipeline):
                         item[k] = x
                 # item['image'] = os.path.join(settings.IMAGES_STORE, x['path'])
                 # break
+        return item
+
+
+class MyFilesPipeline(FilesPipeline):
+    def get_media_requests(self, item, info):
+        for k, v in item.items():
+            if isinstance(v, DownloadFileItem):
+                yield scrapy.Request(v['file_url'])
+
+    def item_completed(self, results, item, info):
+        for ok, x in results:
+            if ok:
+                x['path'] = os.path.join(settings.FILES_STORE, x['path'])
+                for k, v in item.items():
+                    if isinstance(v, DownloadFileItem) and v['file_url'] == x['url']:
+                        item[k] = x
         return item
