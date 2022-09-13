@@ -62,26 +62,51 @@ class TypeSpider(scrapy.Spider):
             r'.mw-parser-output > h3:contains("Physical Appearance") + p::text').get()
         description['Tempedia'] = response.css(
             r'.mw-parser-output > h3:contains("Tempedia") + p >i::text').get()
-        
-        crySrc=response.css(r'tr.infobox-row th:contains("Cry") + td audio::attr(src)').get()
-        cry=DownloadFileItem(file_url=crySrc)
 
-        locations=[]
+        crySrc = response.css(
+            r'tr.infobox-row th:contains("Cry") + td audio::attr(src)').get()
+        cry = DownloadFileItem(file_url=crySrc)
+
+        locations = []
         for a in response.css(r'tr.infobox-row th:contains("Locations") + td a'):
             locations.append(a.css('::text').get())
-        
-        height=response.css(r'table.infobox-half-row tr:contains("Height") + tr td::text').get()
-        weight=response.css(r'table.infobox-half-row tr:contains("Weight") + tr td::text').get()
 
-        tvYield={}
-        tvYield['HP']=response.css(r'.tv-table > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(1)::text').get('').strip()
-        tvYield['STA']=response.css(r'.tv-table > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(2)::text').get('').strip()
-        tvYield['SPD']=response.css(r'.tv-table > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(3)::text').get('').strip()
-        tvYield['ATK']=response.css(r'.tv-table > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(4)::text').get('').strip()
-        tvYield['DEF']=response.css(r'.tv-table > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(5)::text').get('').strip()
-        tvYield['SPATK']=response.css(r'.tv-table > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(6)::text').get('').strip()
-        tvYield['SPDEF']=response.css(r'.tv-table > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(7)::text').get('').strip()
+        height = response.css(
+            r'table.infobox-half-row tr:contains("Height") + tr td::text').get()
+        weight = response.css(
+            r'table.infobox-half-row tr:contains("Weight") + tr td::text').get()
 
+        tvYield = {}
+        tvYield['HP'] = response.css(
+            r'.tv-table > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(1)::text').get('').strip()
+        tvYield['STA'] = response.css(
+            r'.tv-table > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(2)::text').get('').strip()
+        tvYield['SPD'] = response.css(
+            r'.tv-table > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(3)::text').get('').strip()
+        tvYield['ATK'] = response.css(
+            r'.tv-table > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(4)::text').get('').strip()
+        tvYield['DEF'] = response.css(
+            r'.tv-table > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(5)::text').get('').strip()
+        tvYield['SPATK'] = response.css(
+            r'.tv-table > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(6)::text').get('').strip()
+        tvYield['SPDEF'] = response.css(
+            r'.tv-table > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(7)::text').get('').strip()
+
+        # 进化链
+        evolvesTo = []
+        for div in response.css(
+                r'div.evobox-container > table.evobox:contains("'+name+r'") + div.evobox-evolution'):
+            method = div.css(r'div.evolution-description::text').get('') + ' ' +\
+                ' '.join(div.css(r'div.evolution-description a::text').getall())
+            method = method.strip()
+            totable = div.css(r':scope + table.evobox')
+            if not totable:
+                continue
+            to = totable.css('tr.evobox-name > td > a::text').get('')
+            evolvesTo.append({
+                'method': method,
+                'to': to,
+            })
 
         yield TemtemItem(
             name=name,
@@ -99,4 +124,5 @@ class TypeSpider(scrapy.Spider):
             height=height,
             weight=weight,
             tvYield=tvYield,
+            evolvesTo=evolvesTo,
         )
