@@ -47,3 +47,5 @@ class TemtemItem(scrapy.Item):
     weight = scrapy.Field()
     tvYield = scrapy.Field()
     evolvesTo = scrapy.Field()
+    stats = scrapy.Field()
+    typeMatchup = scrapy.Field()

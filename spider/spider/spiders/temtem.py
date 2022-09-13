@@ -108,6 +108,89 @@ class TypeSpider(scrapy.Spider):
                 'to': to,
             })
 
+        # 基本属性
+        stats = {
+            'HP': {
+                'base': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(3) > th:nth-child(1) > div:nth-child(2)::text').get(),
+                '50': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(3) > td:nth-child(3) > small:nth-child(1) > b:nth-child(1)::text').get(),
+                '100': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(3) > td:nth-child(4) > small:nth-child(1) > b:nth-child(1)::text').get(),
+            },
+            'STA': {
+                'base': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(4) > th:nth-child(1) > div:nth-child(2)::text').get(),
+                '50': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(4) > td:nth-child(3) > small:nth-child(1) > b:nth-child(1)::text').get(),
+                '100': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(4) > td:nth-child(4) > small:nth-child(1) > b:nth-child(1)::text').get(),
+            },
+            'SPD': {
+                'base': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(5) > th:nth-child(1) > div:nth-child(2)::text').get(),
+                '50': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(5) > td:nth-child(3) > small:nth-child(1) > b:nth-child(1)::text').get(),
+                '100': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(5) > td:nth-child(4) > small:nth-child(1) > b:nth-child(1)::text').get(),
+            },
+            'ATK': {
+                'base': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(5) > th:nth-child(1) > div:nth-child(2)::text').get(),
+                '50': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(5) > td:nth-child(3) > small:nth-child(1) > b:nth-child(1)::text').get(),
+                '100': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(5) > td:nth-child(4) > small:nth-child(1) > b:nth-child(1)::text').get(),
+            },
+            'DEF': {
+                'base': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(6) > th:nth-child(1) > div:nth-child(2)::text').get(),
+                '50': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(6) > td:nth-child(3) > small:nth-child(1) > b:nth-child(1)::text').get(),
+                '100': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(6) > td:nth-child(4) > small:nth-child(1) > b:nth-child(1)::text').get(),
+            },
+            'SPATK': {
+                'base': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(7) > th:nth-child(1) > div:nth-child(2)::text').get(),
+                '50': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(7) > td:nth-child(3) > small:nth-child(1) > b:nth-child(1)::text').get(),
+                '100': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(7) > td:nth-child(4) > small:nth-child(1) > b:nth-child(1)::text').get(),
+            },
+            'SPDEF': {
+                'base': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(8) > th:nth-child(1) > div:nth-child(2)::text').get(),
+                '50': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(8) > td:nth-child(3) > small:nth-child(1) > b:nth-child(1)::text').get(),
+                '100': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(8) > td:nth-child(4) > small:nth-child(1) > b:nth-child(1)::text').get(),
+            },
+        }
+
+        # 属性抵抗
+        def extractMatchup(response, group):
+            matchup = []
+            tmap = {}
+            title = ''
+            for i, th in enumerate(response.css(
+                    r'.type-table > tbody:nth-child(1) > tr:nth-child(1) > th')):
+                t = th.css('a::attr(title)').get('').strip()
+                if 'type' in t or 'Type' in t:
+                    tmap[i] = t
+                else:
+                    title = th.css('::text').get('').strip()
+            for tr in response.css(
+                    r'.type-table > tbody:nth-child(1) > tr:not(:nth-child(1)):not(:last-child)'):
+                m = {}
+                for i, td in enumerate(tr.css('td')):
+                    tdclass = td.css('::attr(class)').get('').strip()
+                    if i in tmap and tdclass.startswith('resist'):
+                        v = 1
+                        if tdclass == 'resist--0':
+                            v = 0
+                        elif tdclass == 'resist--2':
+                            v = 2
+                        elif tdclass == 'resist--05':
+                            v = 0.5
+                        m[tmap[i]] = v
+                    else:
+                        m['name'] = td.css('::text').get().strip()
+                        m['title'] = title
+                        m['group'] = group
+                matchup.append(m)
+            return matchup
+
+        typeMatchup = []
+        tabs = response.css(
+            r'.mw-parser-output > h2:contains("Type Matchup") + div.koish-tabs')
+        # print(tabs, '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+        if not tabs:  # 没有分组
+            typeMatchup = extractMatchup(response, None)
+        else:   # 分组
+            for article in tabs.css('div.tabber article'):
+                group = article.css('::attr(title)').get('').strip()
+                typeMatchup.extend(extractMatchup(article, group))
+
         yield TemtemItem(
             name=name,
             no=no,
@@ -125,4 +208,6 @@ class TypeSpider(scrapy.Spider):
             weight=weight,
             tvYield=tvYield,
             evolvesTo=evolvesTo,
+            stats=stats,
+            typeMatchup=typeMatchup,
         )
