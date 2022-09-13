@@ -238,6 +238,10 @@ class TypeSpider(scrapy.Spider):
                 'stab': stab,
                 'technique': technique,
             })
+        # 冷知识
+        trivia = []
+        for li in response.css(r'.mw-parser-output > h2:contains("Trivia") + ul li '):
+            trivia.append((' '.join(li.css('::text').getall())).strip())
 
         yield TemtemItem(
             name=name,
@@ -259,4 +263,5 @@ class TypeSpider(scrapy.Spider):
             stats=stats,
             typeMatchup=typeMatchup,
             techniques=techniques,
+            trivia=trivia,
         )

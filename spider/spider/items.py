@@ -50,3 +50,4 @@ class TemtemItem(scrapy.Item):
     stats = scrapy.Field()
     typeMatchup = scrapy.Field()
     techniques = scrapy.Field()
+    trivia = scrapy.Field()
