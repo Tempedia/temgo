@@ -49,3 +49,4 @@ class TemtemItem(scrapy.Item):
     evolvesTo = scrapy.Field()
     stats = scrapy.Field()
     typeMatchup = scrapy.Field()
+    techniques = scrapy.Field()

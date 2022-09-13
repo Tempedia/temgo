@@ -176,6 +176,7 @@ class TypeSpider(scrapy.Spider):
                     else:
                         m['name'] = td.css('::text').get().strip()
                         m['title'] = title
+                    if group:
                         m['group'] = group
                 matchup.append(m)
             return matchup
@@ -183,13 +184,60 @@ class TypeSpider(scrapy.Spider):
         typeMatchup = []
         tabs = response.css(
             r'.mw-parser-output > h2:contains("Type Matchup") + div.koish-tabs')
-        # print(tabs, '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
         if not tabs:  # 没有分组
             typeMatchup = extractMatchup(response, None)
         else:   # 分组
             for article in tabs.css('div.tabber article'):
                 group = article.css('::attr(title)').get('').strip()
                 typeMatchup.extend(extractMatchup(article, group))
+
+        # 技能
+        techniques = {
+            'leveling_up': [],
+            'course': [],
+            'breeding': [],
+        }
+        # 升级技能
+        for tr in response.css(
+                r'.mw-parser-output > h3:contains("By Leveling up") + table.learnlist tbody tr:not(:last-child)'):
+            if not tr.css('td:nth-child(2)'):
+                continue
+            levelStr = tr.css(r'td:first-child::text').get().strip()
+            level = int(levelStr) if levelStr != '?' else 0
+            stab = bool(tr.css(r'td:nth-child(2) > i'))
+            technique = tr.css(r'td:nth-child(2) a::text').get('').strip()
+            techniques['leveling_up'].append({
+                'level': level,
+                'stab': stab,
+                'technique': technique,
+            })
+        # 教程技能
+        for tr in response.css(
+                r'.mw-parser-output > h3:contains("By Technique Course") + table.learnlist tbody tr:not(:last-child)'):
+            if not tr.css('td:nth-child(2)'):
+                continue
+            course = tr.css(r'td:first-child a::text').get('').strip()
+            stab = bool(tr.css(r'td:nth-child(2) > i'))
+            technique = tr.css(r'td:nth-child(2) a::text').get('').strip()
+            techniques['course'].append({
+                'course': course,
+                'stab': stab,
+                'technique': technique,
+            })
+        # 遗传技能
+        for tr in response.css(
+                r'.mw-parser-output > h3:contains("By Breeding") + table.learnlist tbody tr:not(:last-child)'):
+            if not tr.css('td:nth-child(2)'):
+                continue
+            stab = bool(tr.css(r'td:nth-child(2) > i'))
+            technique = tr.css(r'td:nth-child(2) a::text').get('').strip()
+            parents = tr.css(
+                'td:first-child div.parents div.parent a::attr(title)').getall()
+            techniques['breeding'].append({
+                'parents': parents,
+                'stab': stab,
+                'technique': technique,
+            })
 
         yield TemtemItem(
             name=name,
@@ -210,4 +258,5 @@ class TypeSpider(scrapy.Spider):
             evolvesTo=evolvesTo,
             stats=stats,
             typeMatchup=typeMatchup,
+            techniques=techniques,
         )
