@@ -39,34 +39,34 @@ ROBOTSTXT_OBEY = False
 
 # Override the default request headers:
 DEFAULT_REQUEST_HEADERS = {
-  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-  'Accept-Language': 'en',
-  'User-Agent':'Mozilla/5.0 (X11; Linux x86_64; rv:104.0) Gecko/20100101 Firefox/104.0'
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Language': 'en',
+    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:104.0) Gecko/20100101 Firefox/104.0'
 }
 
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-#SPIDER_MIDDLEWARES = {
+# SPIDER_MIDDLEWARES = {
 #    'spider.middlewares.SpiderSpiderMiddleware': 543,
-#}
+# }
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
+# DOWNLOADER_MIDDLEWARES = {
 #    'spider.middlewares.SpiderDownloaderMiddleware': 543,
-#}
+# }
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
-#EXTENSIONS = {
+# EXTENSIONS = {
 #    'scrapy.extensions.telnet.TelnetConsole': None,
-#}
+# }
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
+# ITEM_PIPELINES = {
 #    'spider.pipelines.SpiderPipeline': 300,
-#}
+# }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
@@ -90,10 +90,16 @@ DEFAULT_REQUEST_HEADERS = {
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
 # 设置图片下载路径
-IMAGES_STORE=os.path.join(os.path.dirname(os.path.dirname(__file__)),'images')
-FILES_STORE=os.path.join(os.path.dirname(os.path.dirname(__file__)),'files')
+# IMAGES_STORE = os.path.join(os.path.dirname(
+#     os.path.dirname(__file__)), 'images')
+FILES_STORE = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'files')
 
 ITEM_PIPELINES = {
-    'spider.pipelines.MyFilesPipeline':2,
-    'spider.pipelines.MyImagesPipeline':1,
+    'spider.pipelines.MyImagePipeline': 1,
+    'spider.pipelines.MyImagesPipeline': 2,
+    'spider.pipelines.TemtemImagesPipeline1': 3,
+    'spider.pipelines.TemtemImagesPipeline2': 4,
+    'spider.pipelines.MyFilesPipeline': 5,
 }
+
+DOWNLOAD_FAIL_ON_DATALOSS = False

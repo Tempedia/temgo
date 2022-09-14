@@ -1,7 +1,7 @@
 #!/usr/env python3
 
 import scrapy
-from ..items import DownloadFileItem, DownloadImageItem, TemtemItem
+from ..items import DownloadFileItem, DownloadImageItem, DownloadImagesItem, TemtemImagesItem, TemtemItem
 from scrapy.exceptions import DropItem
 
 
@@ -243,6 +243,32 @@ class TypeSpider(scrapy.Spider):
         for li in response.css(r'.mw-parser-output > h2:contains("Trivia") + ul li '):
             trivia.append((' '.join(li.css('::text').getall())).strip())
 
+        # 图库
+        gallery = TemtemImagesItem(image_urls=[])
+        for li in response.css(r'.mw-parser-output > h2:contains("Gallery") + ul.gallery li '):
+            src = li.css(r'div.thumb a.image::attr(href)').get()
+            if not src:
+                continue
+            texts = []
+            for t in li.css(r'div.gallerytext p::text').getall():
+                texts.append(t.strip())
+            gallery['image_urls'].append({
+                'url': response.urljoin(src),
+                'text': ' '.join(texts),
+            })
+        renders = TemtemImagesItem(image_urls=[])
+        for li in response.css(r'.mw-parser-output > h3:contains("Renders") + ul.gallery li '):
+            src = li.css(r'div.thumb a.image::attr(href)').get()
+            if not src:
+                continue
+            texts = []
+            for t in li.css(r'div.gallerytext p::text').getall():
+                texts.append(t.strip())
+            renders['image_urls'].append({
+                'url': response.urljoin(src),
+                'text': ' '.join(texts),
+            })
+
         yield TemtemItem(
             name=name,
             no=no,
@@ -264,4 +290,6 @@ class TypeSpider(scrapy.Spider):
             typeMatchup=typeMatchup,
             techniques=techniques,
             trivia=trivia,
+            gallery=gallery,
+            renders=renders,
         )

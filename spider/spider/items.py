@@ -13,6 +13,15 @@ class DownloadImageItem(scrapy.Item):
     image = scrapy.Field()
 
 
+class DownloadImagesItem(scrapy.Item):
+    image_urls = scrapy.Field()
+    images = scrapy.Field()
+
+
+class TemtemImagesItem(scrapy.Item):
+    image_urls = scrapy.Field()
+
+
 class DownloadFileItem(scrapy.Item):
     file_url = scrapy.Field()
     file = scrapy.Field()
@@ -51,3 +60,5 @@ class TemtemItem(scrapy.Item):
     typeMatchup = scrapy.Field()
     techniques = scrapy.Field()
     trivia = scrapy.Field()
+    gallery = scrapy.Field()
+    renders = scrapy.Field()
