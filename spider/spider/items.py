@@ -62,3 +62,20 @@ class TemtemItem(scrapy.Item):
     trivia = scrapy.Field()
     gallery = scrapy.Field()
     renders = scrapy.Field()
+
+
+class TechniqueItem(scrapy.Item):
+    name = scrapy.Field()
+    type = scrapy.Field()
+    synergyType = scrapy.Field()
+    clas = scrapy.Field()
+    dmg = scrapy.Field()
+    sta = scrapy.Field()
+    hold = scrapy.Field()
+    priority = scrapy.Field()
+    targeting = scrapy.Field()
+    video = scrapy.Field()
+
+    effect = scrapy.Field()
+    synergyEffect = scrapy.Field()
+    desc = scrapy.Field()
