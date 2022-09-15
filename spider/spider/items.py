@@ -101,3 +101,9 @@ class LocationItem(scrapy.Item):
     desc = scrapy.Field()
     comment = scrapy.Field()
     areas = scrapy.Field()
+
+
+class TechniqueCourseItem(scrapy.Item):
+    name = scrapy.Field()
+    course = scrapy.Field()
+    source = scrapy.Field()
