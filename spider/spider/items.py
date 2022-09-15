@@ -79,3 +79,11 @@ class TechniqueItem(scrapy.Item):
     effect = scrapy.Field()
     synergyEffect = scrapy.Field()
     desc = scrapy.Field()
+
+
+class TraitItem(scrapy.Item):
+    name = scrapy.Field()
+    desc = scrapy.Field()
+    impact = scrapy.Field()
+    trigger = scrapy.Field()
+    effect = scrapy.Field()
