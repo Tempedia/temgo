@@ -35,7 +35,7 @@ class TypeSpider(scrapy.Spider):
             weakTo.append(a.css('::attr(title)').get())
         trivia = []
         for li in response.css('.mw-parser-output > ul:nth-child(15) > li'):
-            trivia.append(li.css('::text').get())
+            trivia.append(li.get())
 
         icon = DownloadImageItem(image_url=response.urljoin(iconSrc))
 
