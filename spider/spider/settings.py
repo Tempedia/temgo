@@ -99,7 +99,9 @@ ITEM_PIPELINES = {
     'spider.pipelines.MyImagesPipeline': 2,
     'spider.pipelines.TemtemImagesPipeline1': 3,
     'spider.pipelines.TemtemImagesPipeline2': 4,
-    'spider.pipelines.MyFilesPipeline': 5,
+    'spider.pipelines.TemtemImagePipeline1': 5,
+    'spider.pipelines.TemtemImagePipeline2': 6,
+    'spider.pipelines.MyFilesPipeline': 7,
 }
 
 DOWNLOAD_FAIL_ON_DATALOSS = False

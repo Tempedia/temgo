@@ -22,6 +22,10 @@ class TemtemImagesItem(scrapy.Item):
     image_urls = scrapy.Field()
 
 
+class TemtemImageItem(scrapy.Item):
+    image_url = scrapy.Field()
+
+
 class DownloadFileItem(scrapy.Item):
     file_url = scrapy.Field()
     file = scrapy.Field()
@@ -87,3 +91,13 @@ class TraitItem(scrapy.Item):
     impact = scrapy.Field()
     trigger = scrapy.Field()
     effect = scrapy.Field()
+
+
+class LocationItem(scrapy.Item):
+    name = scrapy.Field()
+    connectedAreas = scrapy.Field()
+    island = scrapy.Field()
+    image = scrapy.Field()
+    desc = scrapy.Field()
+    comment = scrapy.Field()
+    areas = scrapy.Field()

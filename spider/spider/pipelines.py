@@ -12,7 +12,7 @@ import scrapy
 from scrapy.pipelines.files import FilesPipeline
 from scrapy.exceptions import DropItem
 
-from .items import DownloadFileItem, DownloadImageItem, DownloadImagesItem, TemtemImagesItem
+from .items import DownloadFileItem, DownloadImageItem, DownloadImagesItem, TemtemImageItem, TemtemImagesItem
 from . import settings
 import os
 import requests
@@ -120,4 +120,45 @@ class MyFilesPipeline(FilesPipeline):
                 for k, v in item.items():
                     if isinstance(v, DownloadFileItem) and v['file_url'] == x['url']:
                         item[k] = x
+        return item
+
+
+class TemtemImagePipeline1(object):
+    async def process_item(self, item, spider):
+        for k, v in item.items():
+            if isinstance(v, TemtemImageItem):
+                url = v['image_url']
+                request = scrapy.Request(url['url'])
+                response = await maybe_deferred_to_future(spider.crawler.engine.download(request, spider))
+                src = response.css(r'#file > a::attr(href)').get()
+                url['url'] = response.urljoin(src)
+        return item
+
+
+class TemtemImagePipeline2(FilesPipeline):
+
+    def get_media_requests(self, item, info):
+        for k, v in item.items():
+            if isinstance(v, TemtemImageItem):
+                url = v['image_url']
+                yield scrapy.Request(url['url'])
+
+    def item_completed(self, results, item, info):
+        m = {}
+        for k, v in item.items():
+            if isinstance(v, TemtemImageItem):
+                m[k] = []
+        for ok, x in results:
+            if ok:
+                x['path'] = os.path.join(settings.FILES_STORE, x['path'])
+                for k, v in item.items():
+                    if isinstance(v, TemtemImageItem):
+                        url = v['image_url']
+                        if x['url'] == url['url']:
+                            if 'text' in url:
+                                x['text'] = url['text']
+                            m[k].append(x)
+                            break
+        for k, v in m.items():
+            item[k] = v
         return item

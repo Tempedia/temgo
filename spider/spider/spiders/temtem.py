@@ -1,6 +1,8 @@
 #!/usr/env python3
 
 import scrapy
+
+from .utils import parseStrList
 from ..items import DownloadFileItem, DownloadImageItem, DownloadImagesItem, TemtemImagesItem, TemtemItem
 from scrapy.exceptions import DropItem
 
@@ -58,8 +60,8 @@ class TypeSpider(scrapy.Spider):
         lumaIcon = DownloadImageItem(image_url=response.urljoin(lumaIconSrc))
 
         description = {'Physical Appearance': '', 'Tempedia': ''}
-        description['Physical Appearance'] = response.css(
-            r'.mw-parser-output > h3:contains("Physical Appearance") + p::text').get()
+        description['Physical Appearance'] = parseStrList(response.css(
+            r'.mw-parser-output > h3:contains("Physical Appearance") ~ p').getall())
         description['Tempedia'] = response.css(
             r'.mw-parser-output > h3:contains("Tempedia") + p >i::text').get()
 
@@ -69,7 +71,10 @@ class TypeSpider(scrapy.Spider):
 
         locations = []
         for a in response.css(r'tr.infobox-row th:contains("Locations") + td a'):
-            locations.append(a.css('::text').get())
+            location = a.css('::text').get('')
+            if not location or location == 'Evolution':
+                continue
+            locations.append(location)
 
         height = response.css(
             r'table.infobox-half-row tr:contains("Height") + tr td::text').get()

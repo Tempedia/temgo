@@ -3,21 +3,7 @@
 import scrapy
 
 from ..items import DownloadFileItem, TechniqueItem
-
-
-def parseInt(i):
-    if not i or i == '-':
-        return -1
-    return int(i)
-
-
-def parseStrList(l):
-    texts = []
-    for i in l:
-        i = i.strip()
-        if i:
-            texts.append(i)
-    return ' '.join(texts)
+from .utils import parseStrList, parseInt
 
 
 class TypeSpider(scrapy.Spider):
