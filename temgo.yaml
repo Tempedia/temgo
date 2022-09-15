@@ -1,0 +1,8 @@
+http:
+  listen: 127.0.0.1:9999
+  debug: true
+
+db:
+  debug: true
+  psql:
+    dsn: "postgres://postgres@127.0.0.1/temgo?sslmode=disable"
