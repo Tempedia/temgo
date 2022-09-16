@@ -10,4 +10,5 @@ func Register(router *echo.Group) {
 
 	router.PUT("/login", Login)
 	authRouter.PUT("/logout", Logout)
+	authRouter.GET("/self", GetSelf)
 }
