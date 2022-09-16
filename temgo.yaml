@@ -1,8 +1,12 @@
 http:
   listen: 127.0.0.1:9999
   debug: true
+  sesson: "ywe4&u@vCdKi91&Jo3J@14@th8Ae2Np*"
 
 db:
-  debug: true
+  debug: false
   psql:
     dsn: "postgres://postgres@127.0.0.1/temgo?sslmode=disable"
+
+files:
+  path: "./loader/scripts/files"

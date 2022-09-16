@@ -29,9 +29,11 @@ def updateHTML(html):
     '''更新HTML文本，给图片添加前缀'''
     s = BeautifulSoup(html, 'html.parser')
     for a in s.find_all('a'):
-        a['href'] = 'https://temtem.wiki.gg'+a['href']
+        if 'href' in a and not a['href'].startswith('http'):
+            a['href'] = 'https://temtem.wiki.gg'+a['href']
     for img in s.find_all('img'):
-        img['src'] = 'https://temtem.wiki.gg'+img['src']
+        if 'href' in img and not img['href'].startswith('http'):
+            img['src'] = 'https://temtem.wiki.gg'+img['src']
     return str(s)
 
 

@@ -2,34 +2,37 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
-	"net/http"
 	"os"
 	"os/signal"
 	"path"
 	"runtime"
-	"syscall"
 	"time"
 
+	"github.com/gorilla/sessions"
+	"github.com/labstack/echo-contrib/session"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	log "github.com/sirupsen/logrus"
-
-	"github.com/uptrace/bunrouter"
-	"github.com/uptrace/bunrouter/extra/reqlog"
+	"gitlab.com/wiky.lyu/temgo/api"
 	"gitlab.com/wiky.lyu/temgo/config"
 	"gitlab.com/wiky.lyu/temgo/db"
-	"gitlab.com/wiky.lyu/temgo/db/temtem"
+	"gitlab.com/wiky.lyu/temgo/service/files"
 )
 
 const (
-	appName = "temgo"
+	APPName = "temgo"
 )
 
 func init() {
-	if err := config.Init(appName); err != nil {
+	if err := config.Init(APPName); err != nil {
 		panic(err)
 	}
+
 	initLog()
-	InitDB()
+	initDatabase()
+	initFiles()
 }
 
 func initLog() {
@@ -42,98 +45,105 @@ func initLog() {
 	})
 }
 
-func InitDB() {
+// func initGraylog(instance string) {
+// 	type GraylogConfig struct {
+// 		URL string `json:"url"`
+// 	}
+// 	graylogCfg := GraylogConfig{}
+// 	if err := config.Unmarshal("graylog", &graylogCfg); err != nil {
+// 		panic(err)
+// 	}
+// 	if graylogCfg.URL != "" {
+// 		hook := graylog.NewGraylogHook(graylogCfg.URL, map[string]interface{}{"instance": instance})
+// 		log.AddHook(hook)
+// 	}
+// }
+
+func initDatabase() {
+
 	cfg := struct {
-		PSQL struct {
-			DSN string `json:"dsn" yaml:"dsn"`
-		} `json:"psql" yaml:"psql"`
 		Debug bool `json:"debug" yaml:"debug"`
+		PSQL  struct {
+			DSN string `json:"dsn" yaml:"dsn"`
+		}
 	}{}
 	if err := config.Unmarshal("db", &cfg); err != nil {
-		log.Fatalf("读取DB配置出错: %v", err)
+		panic(err)
 	}
+
 	if err := db.Init(cfg.PSQL.DSN, cfg.Debug); err != nil {
-		log.Fatalf("初始化数据库失败: %v", err)
+		panic(err)
+	}
+}
+
+func initFiles() {
+	cfg := struct {
+		Path string `json:"path" yaml:"path"`
+	}{}
+	if err := config.Unmarshal("files", &cfg); err != nil {
+		panic(err)
+	}
+	if err := files.Init(cfg.Path); err != nil {
+		panic(err)
 	}
 }
 
 func main() {
 
 	cfg := struct {
-		Listen string `json:"listen" yaml:"listen"`
-		Debug  bool   `json:"debug" yaml:"debug"`
+		Listen  string `json:"listen" yaml:"listen"`
+		Session string `json:"session" yaml:"session"`
+		Debug   bool   `json:"debug" yaml:"debug"`
 	}{}
+
 	if err := config.Unmarshal("http", &cfg); err != nil {
-		log.Fatalf("读取HTTP配置出错:%v", err)
+		panic(err)
 	}
-	router := bunrouter.New(
-		bunrouter.Use(reqlog.NewMiddleware(
-			reqlog.WithEnabled(cfg.Debug),
-		)),
-		bunrouter.WithNotFoundHandler(notFoundHandler),
-		bunrouter.WithMethodNotAllowedHandler(methodNotAllowedHandler),
-	)
-
-	router.GET("/", indexHandler)
-
-	router.WithGroup("/api", func(g *bunrouter.Group) {
-		g.GET("/users/:id", debugHandler)
-		g.GET("/users/current", debugHandler)
-		g.GET("/users/*path", debugHandler)
-	})
-
-	httpServer := http.Server{
-		Addr:    cfg.Listen,
-		Handler: router,
+	var listen string
+	flag.StringVar(&listen, "http.listen", "", "bind address")
+	flag.Parse()
+	if listen != "" {
+		cfg.Listen = listen
 	}
+
+	e := echo.New()
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Output: os.Stdout,
+	}))
+	e.Use(middleware.Recover())
+	e.Use(middleware.RequestID())
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:     []string{"http://127.0.0.1:4200"},
+		AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderXRequestedWith},
+		AllowCredentials: true,
+		AllowMethods:     []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
+	}))
+	e.Use(session.Middleware(sessions.NewCookieStore([]byte(cfg.Session))))
+	e.HTTPErrorHandler = errorHandler
+
+	api.Register(e)
+
+	instanceName := fmt.Sprintf("%s %s", APPName, cfg.Listen)
+	// initGraylog(instanceName)
+
 	go func() {
-		log.Infof("监听 http://%s", cfg.Listen)
-		if err := httpServer.ListenAndServe(); err != nil {
-			if err != http.ErrServerClosed {
-				log.Errorf("ListenAndServe Error: %v", err)
-			}
+		if err := e.Start(cfg.Listen); err != nil {
+			log.Fatalf("shutting down the server: %v", err)
 		}
 	}()
+	log.Infof("%s started", instanceName)
 
-	types := make([]*temtem.TemtemType, 0)
-	if err := db.PG().NewSelect().Model(&types).Scan(context.Background()); err != nil {
-		log.Errorf("DB Error: %v", err)
-	}
-	for _, t := range types {
-		log.Infof("%v:  %s", t.Name, t.Trivia)
-	}
-
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
-	<-c
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt, os.Kill)
+	<-quit
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	if err := httpServer.Shutdown(ctx); err != nil {
-		log.Errorf("%s 退出出错: %v", err)
+	if err := e.Shutdown(ctx); err != nil {
+		e.Logger.Fatal(err)
 	}
-	log.Infof("%s 退出成功", appName)
+	log.Warnf("%s quited", instanceName)
 }
 
-func indexHandler(w http.ResponseWriter, req bunrouter.Request) error {
-	return bunrouter.JSON(w, bunrouter.H{
-		"hello": "world",
-	})
-}
-
-func debugHandler(w http.ResponseWriter, req bunrouter.Request) error {
-	return bunrouter.JSON(w, bunrouter.H{
-		"route":  req.Route(),
-		"params": req.Params().Map(),
-	})
-}
-
-func notFoundHandler(w http.ResponseWriter, req bunrouter.Request) error {
-	w.WriteHeader(http.StatusNotFound)
-	return nil
-}
-
-func methodNotAllowedHandler(w http.ResponseWriter, req bunrouter.Request) error {
-	w.WriteHeader(http.StatusMethodNotAllowed)
-	return nil
+func errorHandler(err error, c echo.Context) {
+	c.NoContent(500)
 }

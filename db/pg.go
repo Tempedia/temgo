@@ -17,11 +17,15 @@ func Init(dsn string, debug bool) error {
 
 	// Create a Bun db on top of it.
 	_db = bun.NewDB(pgdb, pgdialect.New())
-	_db.AddQueryHook(bundebug.NewQueryHook(bundebug.WithVerbose(debug)))
+	_db.AddQueryHook(bundebug.NewQueryHook(bundebug.WithVerbose(true)))
 
 	return nil
 }
 
 func PG() *bun.DB {
 	return _db
+}
+
+func Begin() (bun.Tx, error) {
+	return _db.Begin()
 }

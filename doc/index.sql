@@ -1,6 +1,5 @@
 \c "temgo";
 
-CREATE EXTENSION "pg_trgm";
 
 CREATE INDEX ON "temtem_type" USING GIN("name" gin_trgm_ops);
 CREATE INDEX ON "temtem_type" USING GIN("effective_against");
