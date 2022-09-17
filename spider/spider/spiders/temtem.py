@@ -177,6 +177,8 @@ class TypeSpider(scrapy.Spider):
                             v = 2
                         elif tdclass == 'resist--05':
                             v = 0.5
+                        elif tdclass == 'resist--4':
+                            v = 4
                         m[tmap[i]] = v
                     else:
                         m['name'] = td.css('::text').get().strip()
@@ -246,7 +248,7 @@ class TypeSpider(scrapy.Spider):
         # 冷知识
         trivia = []
         for li in response.css(r'.mw-parser-output > h2:contains("Trivia") + ul li '):
-            trivia.append((' '.join(li.css('::text').getall())).strip())
+            trivia.append(li.get())
 
         # 图库
         gallery = TemtemImagesItem(image_urls=[])

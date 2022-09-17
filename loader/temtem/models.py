@@ -18,3 +18,30 @@ class Type(models.Model):
 
     class Meta:
         db_table = "temtem_type"
+
+
+class Temtem(models.Model):
+    no = models.PositiveIntegerField(primary_key=True)
+    name = models.CharField(max_length=64)
+    type = ArrayField(models.CharField(max_length=64))
+    catch_rate = models.FloatField()
+    gender_ratio = models.JSONField()
+    experience_yield_modifier = models.FloatField()
+    icon = models.CharField(max_length=1024)  # 图标
+    luma_icon = models.CharField(max_length=1024)  # 闪光图标
+    traits = ArrayField(models.CharField(max_length=64))
+    description = models.JSONField()
+    cry = models.CharField(max_length=1024)  # 叫声
+    height = models.FloatField()  # 身高，cm
+    weight = models.FloatField()  # 体重, kg
+    tv_yield = models.JSONField()
+    evolves_to = models.JSONField()  # 进化到
+    stats = models.JSONField()
+    type_matchup = models.JSONField()
+    techniques = models.JSONField()
+    trivia = ArrayField(models.TextField())
+    gallery = models.JSONField()
+    renders = models.JSONField()
+
+    class Meta:
+        db_table = "temtem"
