@@ -13,4 +13,6 @@ type TemtemType struct {
 	IneffectiveAgainst []string `bun:"ineffective_against,array,notnull,nullzero" json:"ineffective_against"`
 	ResistantTo        []string `bun:"resistant_to,array,notnull,nullzero" json:"resistant_to"`
 	WeakTo             []string `bun:"weak_to,array,notnull,nullzero" json:"weak_to"`
+
+	Sort int `bun:"sort,notnull,nullzero" json:"-"`
 }

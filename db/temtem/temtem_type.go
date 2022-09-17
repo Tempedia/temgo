@@ -30,3 +30,19 @@ func GetTemtemType(name string) (*TemtemType, error) {
 	}
 	return &t, nil
 }
+
+func UpdateTemtemType(name string, comment string, trivia []string) (*TemtemType, error) {
+	t := TemtemType{
+		Name:    name,
+		Comment: comment,
+		Trivia:  trivia,
+	}
+
+	if _, err := db.PG().NewUpdate().Model(&t).WherePK().
+		Set(`"comment"=?comment`).Set(`"trivia"=?trivia`).
+		Returning(`*`).Exec(context.Background()); err != nil {
+		log.Errorf("DB Error: %v", err)
+		return nil, err
+	}
+	return &t, nil
+}

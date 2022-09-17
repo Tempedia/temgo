@@ -3,11 +3,11 @@ package api
 import (
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
+	"gitlab.com/wiky.lyu/temgo/api/files"
 	"gitlab.com/wiky.lyu/temgo/api/middleware"
 	"gitlab.com/wiky.lyu/temgo/api/staff"
 	"gitlab.com/wiky.lyu/temgo/api/sys"
 	"gitlab.com/wiky.lyu/temgo/api/temtem"
-	"gitlab.com/wiky.lyu/temgo/service/files"
 )
 
 type CustomValidator struct {
@@ -24,6 +24,5 @@ func Register(e *echo.Echo) {
 	sys.Register(router.Group("/sys"))
 	staff.Register(router.Group("/staff"))
 	temtem.Register(router.Group("/temtem"))
-
-	router.Static("/files", files.Folder())
+	files.Register(router.Group("/files"))
 }

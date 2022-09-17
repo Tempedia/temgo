@@ -2,6 +2,7 @@ package x
 
 import (
 	"math/rand"
+	"strings"
 	"time"
 	"unicode"
 )
@@ -132,4 +133,15 @@ func DiffIntSlice(a, b []int64) bool {
 		}
 	}
 	return true
+}
+
+func StripStringArray(list []string) []string {
+	r := make([]string, 0)
+	for _, s := range list {
+		s = strings.TrimSpace(s)
+		if s != "" {
+			r = append(r, s)
+		}
+	}
+	return r
 }
