@@ -1,5 +1,6 @@
 #!/usr/env python3
 
+from curses import meta
 import scrapy
 from ..items import DownloadImageItem, TypeItem
 
@@ -9,8 +10,10 @@ class TypeSpider(scrapy.Spider):
     start_urls = ['https://temtem.wiki.gg/wiki/Temtem_types']
 
     def parse(self, response):
+        i=0
         for page in response.css('.mw-parser-output > ul:nth-child(5) > li > a:nth-child(1)'):
-            yield response.follow(page, self.parse_type)
+            yield response.follow(page, self.parse_type,meta={'sort':i})
+            i+=1
 
     def parse_type(self, response):
         name = response.css('#firstHeading::text').get().strip()
@@ -49,4 +52,5 @@ class TypeSpider(scrapy.Spider):
             resistantTo=resistantTo,
             weakTo=weakTo,
             trivia=trivia,
+            sort=response.meta['sort'],
         )

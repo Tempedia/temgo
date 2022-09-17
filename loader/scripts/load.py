@@ -43,7 +43,6 @@ def updateHTML(html):
 def loadType(path):
     Type.objects.all().delete()
     types = json.load(open(path))
-    sort = 0
     for t in types:
         icon = copyfile(t['icon']['path'], filesfolder)
 
@@ -60,10 +59,9 @@ def loadType(path):
             ineffective_against=t['ineffectiveAgainst'],
             resistant_to=t['resistantTo'],
             weak_to=t['weakTo'],
-            sort=sort,
+            sort=t['sort'],
         )
         tt.save()
-        sort += 1
 
 
 @transaction.atomic
@@ -168,5 +166,5 @@ def run(*args):
         return
     print('文件保存在: %s' % filesfolder)
     folder = args[0]
-    # loadType(os.path.join(folder, 'type.json'))
+    loadType(os.path.join(folder, 'type.json'))
     loadTemtem(os.path.join(folder, 'temtem.json'))
