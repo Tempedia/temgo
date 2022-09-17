@@ -10,6 +10,7 @@ func Register(router *echo.Group) {
 
 	router.GET("/types", FindTemtemTypes)
 	router.GET("/type/:name", GetTemtemType)
+	router.GET("/temtems", FindTemtems)
 
 	authRouter.PUT("/type/:name", UpdateTemtemType)
 }

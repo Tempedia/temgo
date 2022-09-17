@@ -75,8 +75,11 @@ def loadTemtem(path):
         height = float(t['height'].split('cm')[0])
         weight = float(t['weight'].split('kg')[0])
         tvYield = t['tvYield']
-        for k in tvYield:
-            tvYield[k] = int(tvYield[k]) if tvYield[k] else 0,
+        for k in t['tvYield']:
+            if t['tvYield'][k]:
+                tvYield[k]=int(t['tvYield'][k])
+            else:
+                tvYield[k]=0
         evolvesTo = []
         for e in t['evolvesTo']:
             m = {

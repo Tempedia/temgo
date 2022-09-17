@@ -16,7 +16,7 @@ func Init(dsn string, debug bool) error {
 	pgdb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
 
 	// Create a Bun db on top of it.
-	_db = bun.NewDB(pgdb, pgdialect.New())
+	_db = bun.NewDB(pgdb, pgdialect.New(), bun.WithDiscardUnknownColumns())
 	_db.AddQueryHook(bundebug.NewQueryHook(bundebug.WithVerbose(true)))
 
 	return nil
