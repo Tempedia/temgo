@@ -14,5 +14,7 @@ class Type(models.Model):
     resistant_to = ArrayField(models.CharField(max_length=64))
     weak_to = ArrayField(models.CharField(max_length=64))
 
+    sort = models.PositiveSmallIntegerField('sort', db_index=True)
+
     class Meta:
         db_table = "temtem_type"

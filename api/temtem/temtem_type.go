@@ -15,3 +15,15 @@ func FindTemtemTypes(c echo.Context) error {
 	}
 	return ctx.Success(types)
 }
+
+func GetTemtemType(c echo.Context) error {
+	ctx := c.(*middleware.Context)
+
+	name := ctx.Param(`name`)
+
+	t, err := temtemdb.GetTemtemType(name)
+	if err != nil {
+		return err
+	}
+	return ctx.SuccessOr404(t)
+}

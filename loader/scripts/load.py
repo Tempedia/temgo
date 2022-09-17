@@ -29,25 +29,28 @@ def updateHTML(html):
     '''更新HTML文本，给图片添加前缀'''
     s = BeautifulSoup(html, 'html.parser')
     for a in s.find_all('a'):
-        if 'href' in a and not a['href'].startswith('http'):
+        if not a['href'].startswith('http'):
             a['href'] = 'https://temtem.wiki.gg'+a['href']
+            a['target'] = '_blank'
     for img in s.find_all('img'):
-        if 'href' in img and not img['href'].startswith('http'):
+        if not img['src'].startswith('http'):
             img['src'] = 'https://temtem.wiki.gg'+img['src']
-    return str(s)
+    return s
 
 
 @transaction.atomic
 def loadType(path):
     Type.objects.all().delete()
     types = json.load(open(path))
+    sort = 0
     for t in types:
         icon = os.path.basename(t['icon']['path'])
         copyfile(t['icon']['path'], filesfolder)
 
         trivia = []
         for tt in t['trivia']:
-            trivia.append(updateHTML(tt))
+            s = updateHTML(tt)
+            trivia.append(s.li.encode_contents().decode())
         tt = Type(
             name=t['name'],
             icon=icon,
@@ -56,9 +59,11 @@ def loadType(path):
             effective_against=t['effectiveAgainst'],
             ineffective_against=t['ineffectiveAgainst'],
             resistant_to=t['resistantTo'],
-            weak_to=t['weakTo']
+            weak_to=t['weakTo'],
+            sort=sort,
         )
         tt.save()
+        sort += 1
 
 
 def run(*args):
