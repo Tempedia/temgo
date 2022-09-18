@@ -9,6 +9,8 @@ import (
 
 type FindTemtemsRequest struct {
 	Query    string `json:"query" form:"query" query:"query"`
+	Type     string `json:"type" form:"type" query:"type"`
+	Sort     string `json:"sort" form:"sort" query:"sort"`
 	Page     int    `json:"page" form:"page" query:"page"`
 	PageSize int    `json:"pageSize" form:"pageSize" query:"pageSize"`
 }
@@ -22,7 +24,7 @@ func FindTemtems(c echo.Context) error {
 
 	req.Page, req.PageSize = x.Pagination(req.Page, req.PageSize)
 
-	temtems, total, err := temtemdb.FindTemtems(req.Query, req.Page, req.PageSize)
+	temtems, total, err := temtemdb.FindTemtems(req.Query, req.Type, req.Sort, req.Page, req.PageSize)
 	if err != nil {
 		return err
 	}

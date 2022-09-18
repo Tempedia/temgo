@@ -2,27 +2,71 @@ package temtem
 
 import (
 	"context"
+	"fmt"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/uptrace/bun"
 	"gitlab.com/wiky.lyu/temgo/db"
+	"gitlab.com/wiky.lyu/temgo/x"
 )
 
-func FindTemtems(query string, page, pageSize int) ([]*Temtem, int, error) {
+func FindTemtems(query, type_, sort string, page, pageSize int) ([]*Temtem, int, error) {
 	temtems := make([]*Temtem, 0)
 
-	q := db.PG().NewSelect().Model(&temtems).Order(`no ASC`)
+	q := db.PG().NewSelect().Model(&temtems)
 	if query != "" {
 		q = q.WhereGroup(` AND `, func(q *bun.SelectQuery) *bun.SelectQuery {
 			q = q.Where(`"name" ILIKE ?`, "%"+query+"%")
+			if x.IsDigit(query) {
+				q = q.WhereOr(`"no" = ?`, query)
+			}
 			return q
 		})
+	}
+	if type_ != "" {
+		q = q.Where(`?=ANY("type")`, type_)
 	}
 
 	total, err := q.Count(context.Background())
 	if err != nil {
 		log.Errorf("DB Error: %v", err)
 		return nil, 0, err
+	}
+	sortField, sortOrder := x.ParseSortParam(sort)
+	if sortField != "" && sortOrder != "" {
+		switch sortField {
+		case "no":
+			q = q.Order(fmt.Sprintf("no %s", sortOrder))
+		case "name":
+			q = q.Order(fmt.Sprintf("name %s", sortOrder))
+		case "type1":
+			q = q.OrderExpr(fmt.Sprintf("type[1] %s", sortOrder))
+		case "type2":
+			q = q.OrderExpr(fmt.Sprintf("type[2] %s", sortOrder))
+		case "trait1":
+			q = q.OrderExpr(fmt.Sprintf("traits[1] %s", sortOrder))
+		case "trait2":
+			q = q.OrderExpr(fmt.Sprintf("traits[2] %s", sortOrder))
+		case "hp":
+			q = q.OrderExpr(fmt.Sprintf(`"stats"->'HP'->'base' %s`, sortOrder))
+		case "sta":
+			q = q.OrderExpr(fmt.Sprintf(`"stats"->'STA'->'base' %s`, sortOrder))
+		case "spd":
+			q = q.OrderExpr(fmt.Sprintf(`"stats"->'SPD'->'base' %s`, sortOrder))
+		case "atk":
+			q = q.OrderExpr(fmt.Sprintf(`"stats"->'ATK'->'base' %s`, sortOrder))
+		case "def":
+			q = q.OrderExpr(fmt.Sprintf(`"stats"->'DEF'->'base' %s`, sortOrder))
+		case "spatk":
+			q = q.OrderExpr(fmt.Sprintf(`"stats"->'SPATK'->'base' %s`, sortOrder))
+		case "spdef":
+			q = q.OrderExpr(fmt.Sprintf(`"stats"->'SPDEF'->'base' %s`, sortOrder))
+		case "total":
+			q = q.OrderExpr(fmt.Sprintf(`(("stats"->'HP'->>'base')::int + ("stats"->'STA'->>'base')::int + ("stats"->'SPD'->>'base')::int + ("stats"->'ATK'->>'base')::int + ("stats"->'DEF'->>'base')::int + ("stats"->'SPATK'->>'base')::int + ("stats"->'SPDEF'->>'base')::int) %s`, sortOrder))
+		}
+
+	} else {
+		q = q.Order(`no ASC`)
 	}
 
 	if err := q.Limit(pageSize).Offset((page - 1) * pageSize).Scan(context.Background()); err != nil {

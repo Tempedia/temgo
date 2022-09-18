@@ -145,3 +145,21 @@ func StripStringArray(list []string) []string {
 	}
 	return r
 }
+
+func ParseSortParam(sort string) (string, string) {
+	if sort == "" {
+		return "", ""
+	}
+	seps := strings.Fields(sort)
+	if len(seps) != 2 {
+		return "", ""
+	}
+	field := seps[0]
+	order := seps[1]
+	if order == "descend" {
+		order = "DESC"
+	} else {
+		order = "ASC"
+	}
+	return field, order
+}
