@@ -131,24 +131,24 @@ class TypeSpider(scrapy.Spider):
                 '100': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(5) > td:nth-child(4) > small:nth-child(1) > b:nth-child(1)::text').get(),
             },
             'ATK': {
-                'base': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(5) > th:nth-child(1) > div:nth-child(2)::text').get(),
-                '50': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(5) > td:nth-child(3) > small:nth-child(1) > b:nth-child(1)::text').get(),
-                '100': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(5) > td:nth-child(4) > small:nth-child(1) > b:nth-child(1)::text').get(),
-            },
-            'DEF': {
                 'base': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(6) > th:nth-child(1) > div:nth-child(2)::text').get(),
                 '50': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(6) > td:nth-child(3) > small:nth-child(1) > b:nth-child(1)::text').get(),
                 '100': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(6) > td:nth-child(4) > small:nth-child(1) > b:nth-child(1)::text').get(),
             },
-            'SPATK': {
+            'DEF': {
                 'base': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(7) > th:nth-child(1) > div:nth-child(2)::text').get(),
                 '50': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(7) > td:nth-child(3) > small:nth-child(1) > b:nth-child(1)::text').get(),
                 '100': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(7) > td:nth-child(4) > small:nth-child(1) > b:nth-child(1)::text').get(),
             },
-            'SPDEF': {
+            'SPATK': {
                 'base': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(8) > th:nth-child(1) > div:nth-child(2)::text').get(),
                 '50': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(8) > td:nth-child(3) > small:nth-child(1) > b:nth-child(1)::text').get(),
                 '100': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(8) > td:nth-child(4) > small:nth-child(1) > b:nth-child(1)::text').get(),
+            },
+            'SPDEF': {
+                'base': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(9) > th:nth-child(1) > div:nth-child(2)::text').get(),
+                '50': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(9) > td:nth-child(3) > small:nth-child(1) > b:nth-child(1)::text').get(),
+                '100': response.css(r'.statbox > tbody:nth-child(1) > tr:nth-child(9) > td:nth-child(4) > small:nth-child(1) > b:nth-child(1)::text').get(),
             },
         }
 
