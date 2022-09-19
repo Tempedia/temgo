@@ -125,3 +125,12 @@ type Temtem struct {
 	Gallery []TemtemGallery `bun:"gallery,notnull,nullzero,type:jsonb" json:"gallery"`
 	Renders []TemtemGallery `bun:"renders,notnull,nullzero,type:jsonb" json:"renders"`
 }
+
+type TemtemTrait struct {
+	bun.BaseModel `bun:"table:temtem_trait"`
+	Name          string `bun:"name,notnull,pk" json:"name"`
+	Description   string `bun:"description,notnull,nullzero" json:"description"`
+	Impact        string `bun:"impact,notnull,nullzero" json:"impact"`
+	Trigger       string `bun:"trigger,notnull,nullzero" json:"trigger"`
+	Effect        string `bun:"trigger,notnull,nullzero" json:"effect"`
+}

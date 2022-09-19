@@ -22,7 +22,7 @@ class Type(models.Model):
 
 class Temtem(models.Model):
     no = models.PositiveIntegerField(primary_key=True)
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=64,unique=True)
     type = ArrayField(models.CharField(max_length=64))
     catch_rate = models.FloatField()
     gender_ratio = models.JSONField()
@@ -45,3 +45,13 @@ class Temtem(models.Model):
 
     class Meta:
         db_table = "temtem"
+
+class TemtemTrait(models.Model):
+    name = models.CharField(max_length=64,primary_key=True)
+    description=models.TextField()
+    impact=models.CharField(max_length=64)
+    trigger=models.CharField(max_length=256)
+    effect=models.CharField(max_length=256)
+
+    class Meta:
+        db_table = "temtem_trait"

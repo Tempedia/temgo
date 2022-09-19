@@ -5,7 +5,7 @@ import json
 from unicodedata import name
 from django.db import transaction
 
-from temtem.models import Temtem, Type
+from temtem.models import Temtem, TemtemTrait, Type
 import shutil
 from pathlib import Path
 from bs4 import BeautifulSoup
@@ -30,9 +30,10 @@ def updateHTML(html):
     '''更新HTML文本，给图片添加前缀'''
     s = BeautifulSoup(html, 'html.parser')
     for a in s.find_all('a'):
-        if not a['href'].startswith('http'):
-            a['href'] = 'https://temtem.wiki.gg'+a['href']
-            a['target'] = '_blank'
+        a.unwrap()
+        # if not a['href'].startswith('http'):
+        #     a['href'] = 'https://temtem.wiki.gg'+a['href']
+        #     a['target'] = '_blank'
     for img in s.find_all('img'):
         if not img['src'].startswith('http'):
             img['src'] = 'https://temtem.wiki.gg'+img['src']
@@ -162,6 +163,21 @@ def loadTemtem(path):
         )
         tem.save()
 
+@transaction.atomic
+def loadTemtemTrait(path):
+    TemtemTrait.objects.all().delete()
+    traits = json.load(open(path))
+    for t in traits:
+        desc=updateHTML(t['desc']).td.encode_contents().decode()
+        trait=TemtemTrait(
+            name=t['name'],
+            description=desc,
+            impact=t['impact'],
+            trigger=t['trigger'],
+            effect=t['effect'],
+        )
+        trait.save()
+
 
 def run(*args):
     if len(args) != 1:
@@ -171,3 +187,5 @@ def run(*args):
     folder = args[0]
     loadType(os.path.join(folder, 'type.json'))
     loadTemtem(os.path.join(folder, 'temtem.json'))
+    loadTemtemTrait(os.path.join(folder, 'trait.json'))
+

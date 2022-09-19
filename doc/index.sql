@@ -20,3 +20,6 @@ CREATE INDEX ON "temtem"(("stats"->'ATK'->'base'));
 CREATE INDEX ON "temtem"(("stats"->'DEF'->'base'));
 CREATE INDEX ON "temtem"(("stats"->'SPATK'->'base'));
 CREATE INDEX ON "temtem"(("stats"->'SPDEF'->'base'));
+
+
+CREATE INDEX ON "temtem_trait" USING GIN("name" gin_trgm_ops);
