@@ -179,6 +179,8 @@ class TypeSpider(scrapy.Spider):
                             v = 0.5
                         elif tdclass == 'resist--4':
                             v = 4
+                        elif tdclass == 'resist--025':
+                            v=0.25
                         m[tmap[i]] = v
                     else:
                         m['name'] = td.css('::text').get().strip()
