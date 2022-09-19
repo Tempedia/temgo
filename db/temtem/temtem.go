@@ -2,6 +2,7 @@ package temtem
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 
 	log "github.com/sirupsen/logrus"
@@ -74,4 +75,31 @@ func FindTemtems(query, type_, sort string, page, pageSize int) ([]*Temtem, int,
 		return nil, 0, err
 	}
 	return temtems, total, nil
+}
+
+/* 获取temtem的进化前形态 */
+func FindTemtemsEvolvesFrom(name string) ([]*Temtem, error) {
+	temtems := make([]*Temtem, 0)
+
+	if err := db.PG().NewSelect().Model(&temtems).
+		Where(`evolves_to@>?::jsonb`, fmt.Sprintf(`[{"to":"%s"}]`, name)).
+		Order(`no ASC`).Scan(context.Background()); err != nil {
+		log.Errorf("DB Error: %v", err)
+		return nil, err
+	}
+
+	return temtems, nil
+}
+
+func GetTemtemByName(name string) (*Temtem, error) {
+	temtem := Temtem{Name: name}
+
+	if err := db.PG().NewSelect().Model(&temtem).Where(`"name"=?name`).Scan(context.Background()); err != nil {
+		if err != sql.ErrNoRows {
+			log.Errorf("DB Error: %v", err)
+			return nil, err
+		}
+		return nil, nil
+	}
+	return &temtem, nil
 }

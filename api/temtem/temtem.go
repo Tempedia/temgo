@@ -30,3 +30,25 @@ func FindTemtems(c echo.Context) error {
 	}
 	return ctx.List(temtems, req.Page, req.PageSize, total)
 }
+
+/* 查询进化前的Temtem */
+func FindTemtemsEvolvesFrom(c echo.Context) error {
+	ctx := c.(*middleware.Context)
+	name := ctx.Param(`name`)
+
+	temtems, err := temtemdb.FindTemtemsEvolvesFrom(name)
+	if err != nil {
+		return err
+	}
+	return ctx.Success(temtems)
+}
+
+func GetTemtem(c echo.Context) error {
+	ctx := c.(*middleware.Context)
+	name := ctx.Param(`name`)
+	temtem, err := temtemdb.GetTemtemByName(name)
+	if err != nil {
+		return err
+	}
+	return ctx.SuccessOr404(temtem)
+}

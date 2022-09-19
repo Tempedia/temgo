@@ -10,7 +10,10 @@ func Register(router *echo.Group) {
 
 	router.GET("/types", FindTemtemTypes)
 	router.GET("/type/:name", GetTemtemType)
-	router.GET("/temtems", FindTemtems)
-
 	authRouter.PUT("/type/:name", UpdateTemtemType)
+
+	router.GET("/temtems", FindTemtems)
+	router.GET("/temtem/:name", GetTemtem)
+	router.GET("/temtem/:name/evolves_from", FindTemtemsEvolvesFrom)
+
 }
