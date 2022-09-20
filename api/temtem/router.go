@@ -19,6 +19,6 @@ func Register(router *echo.Group) {
 	router.GET("/temtem/:name/evolves_from", FindTemtemsEvolvesFrom)
 
 	/* Trait */
+	router.GET("/temtem/traits", FindTemtemTraits)
 	router.GET("/temtem/trait/:name", GetTemtemTrait)
-
 }

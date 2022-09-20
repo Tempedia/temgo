@@ -20,3 +20,21 @@ func GetTemtemTrait(name string) (*TemtemTrait, error) {
 	}
 	return &trait, nil
 }
+
+func FindTemtemTraits(query string, page, pageSize int) ([]*TemtemTrait, int, error) {
+	traits := make([]*TemtemTrait, 0)
+
+	q := db.PG().NewSelect().Model(&traits)
+
+	if query != "" {
+		q = q.Where(`"name" ILIKE ?`, "%"+query+"%")
+	}
+
+	q = q.Order(`name ASC`)
+	total, err := q.Limit(pageSize).Offset((page - 1) * pageSize).ScanAndCount(context.Background())
+	if err != nil {
+		log.Errorf("DB Error: %v", err)
+		return nil, 0, err
+	}
+	return traits, total, nil
+}

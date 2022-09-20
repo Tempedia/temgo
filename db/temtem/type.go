@@ -132,5 +132,5 @@ type TemtemTrait struct {
 	Description   string `bun:"description,notnull,nullzero" json:"description"`
 	Impact        string `bun:"impact,notnull,nullzero" json:"impact"`
 	Trigger       string `bun:"trigger,notnull,nullzero" json:"trigger"`
-	Effect        string `bun:"trigger,notnull,nullzero" json:"effect"`
+	Effect        string `bun:"effect,notnull,nullzero" json:"effect"`
 }
