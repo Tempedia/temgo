@@ -22,7 +22,7 @@ class Type(models.Model):
 
 class Temtem(models.Model):
     no = models.PositiveIntegerField(primary_key=True)
-    name = models.CharField(max_length=64,unique=True)
+    name = models.CharField(max_length=64, unique=True)
     type = ArrayField(models.CharField(max_length=64))
     catch_rate = models.FloatField()
     gender_ratio = models.JSONField()
@@ -46,12 +46,58 @@ class Temtem(models.Model):
     class Meta:
         db_table = "temtem"
 
+
 class TemtemTrait(models.Model):
-    name = models.CharField(max_length=64,primary_key=True)
-    description=models.TextField()
-    impact=models.CharField(max_length=64)
-    trigger=models.CharField(max_length=256)
-    effect=models.CharField(max_length=256)
+    name = models.CharField(max_length=64, primary_key=True)
+    description = models.TextField()
+    impact = models.CharField(max_length=64)
+    trigger = models.CharField(max_length=256)
+    effect = models.CharField(max_length=256)
 
     class Meta:
         db_table = "temtem_trait"
+
+
+TECHNIQUE_CLASS_CHOICES = (
+    ("Physical", "Physical"),
+    ("Special", "Special"),
+    ("Status", "Status"),
+)
+
+TECHNIQUE_TARGETING_CHOICES = (
+    ("Self", "Self"),
+    ("Single Target", "Single Target"),
+    ("Single other Target", "Single other Target"),
+    ("Single Team", "Single Team"),
+    ("Other Team or Ally", "Other Team or Ally"),
+    ("All", "All"),
+    ("All Other Temtem", "All Other Temtem"),
+)
+
+
+class TemtemTechnique(models.Model):
+    name = models.CharField(max_length=64, primary_key=True)
+    type = models.CharField(max_length=64)
+    cls = models.CharField(db_column='class', max_length=32,
+                           choices=TECHNIQUE_CLASS_CHOICES)
+    damage = models.SmallIntegerField()
+    sta_cost = models.SmallIntegerField()
+    hold = models.SmallIntegerField()
+    priority = models.SmallIntegerField()
+    targeting = models.CharField(
+        max_length=64, choices=TECHNIQUE_TARGETING_CHOICES)
+    description = models.TextField(default='')
+    video = models.CharField(max_length=1024, default='')
+
+    synergy_description = models.TextField(default='')
+    synergy_type = models.CharField(max_length=32)
+    synergy_effects = models.TextField(default='')
+    synergy_damage = models.SmallIntegerField(default=0)
+    synergy_sta_cost = models.SmallIntegerField(default=0)
+    synergy_priority = models.SmallIntegerField(default=0)
+    synergy_targeting = models.CharField(
+        max_length=64, choices=TECHNIQUE_TARGETING_CHOICES, default='')
+    synergy_video = models.CharField(max_length=1024, default='')
+
+    class Meta:
+        db_table = "temtem_technique"

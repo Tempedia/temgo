@@ -6,7 +6,7 @@ from ..items import DownloadFileItem, TechniqueItem
 from .utils import parseStrList, parseInt
 
 
-class TypeSpider(scrapy.Spider):
+class TechniqueSpider(scrapy.Spider):
     name = 'technique'
     start_urls = ['https://temtem.wiki.gg/wiki/Techniques']
 
@@ -72,15 +72,38 @@ class TypeSpider(scrapy.Spider):
             r'.infobox-table > tbody > tr:nth-child(6) > td:nth-child(1) > i')
         item['desc'] = i.get()
 
-        item['effect'] = response.css(
-            r'.mw-parser-output > h2:contains("Effect") + p').get()
-        item['synergyEffect'] = response.css(
-            r'.mw-parser-output > h2:contains("Effect") + p + p').get()
+        # item['effect'] = response.css(
+        #     r'.mw-parser-output > h2:contains("Effect") + p').get()
+        # item['synergyEffect'] = response.css(
+        #     r'.mw-parser-output > h2:contains("Effect") + p + p').get()
 
         videoSrc = response.css(
-            r'.infobox-table > tbody > tr > td > video::attr(src)').get('')
+            r'.infobox-table > tbody > tr:nth-child(3) > td:nth-child(1) > video::attr(src)').get('')
         if videoSrc:
             item['video'] = DownloadFileItem(
-                file_url=response.urljoin(videoSrc))
+                file_url=response.urljoin(videoSrc),
+            )
+
+        if 'synergyType' in item and item['synergyType']:
+            synergy = response.css(
+                r'.infobox-table > tbody> tr:contains("Synergy Details") ~ *')
+            item['synergyVideo'] = DownloadFileItem(
+                file_url=synergy.css('video::attr(src)').get(''),
+            )
+
+            priority = synergy.css(
+                'th:contains("Priority") + td a::attr(title)').get('')
+            if priority:
+                item['synergyPriority'] = int(priority.split('_')[0])
+            item['synergyDamage'] = int(synergy.css(
+                r'th:contains("Damage") + td::text').get('0'))
+            item['synergyEffects'] = synergy.css(
+                r'th:contains("Effects") + td').get('')
+            item['synergySta'] = int(synergy.css(
+                r'th:contains("STA Cost") + td::text').get('0'))
+            item['synergyTargeting'] = synergy.css(
+                r'th:contains("Targeting") + td a::text').get('').strip()
+            item['synergyDesc'] = synergy.css(
+                r'tr td.infobox-centered[colspan="2"] i').get('')
 
         yield item

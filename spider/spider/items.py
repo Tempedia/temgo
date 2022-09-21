@@ -41,7 +41,7 @@ class TypeItem(scrapy.Item):
     resistantTo = scrapy.Field()
     weakTo = scrapy.Field()
     trivia = scrapy.Field()
-    sort=scrapy.Field()
+    sort = scrapy.Field()
 
 
 class TemtemItem(scrapy.Item):
@@ -72,7 +72,6 @@ class TemtemItem(scrapy.Item):
 class TechniqueItem(scrapy.Item):
     name = scrapy.Field()
     type = scrapy.Field()
-    synergyType = scrapy.Field()
     clas = scrapy.Field()
     dmg = scrapy.Field()
     sta = scrapy.Field()
@@ -81,9 +80,17 @@ class TechniqueItem(scrapy.Item):
     targeting = scrapy.Field()
     video = scrapy.Field()
 
-    effect = scrapy.Field()
-    synergyEffect = scrapy.Field()
     desc = scrapy.Field()
+
+    synergyType = scrapy.Field()
+    synergyDamage = scrapy.Field()
+    synergyDesc = scrapy.Field()
+    synergyEffects = scrapy.Field()
+    synergyVideo = scrapy.Field()
+    synergyPriority = scrapy.Field()
+    synergyTargeting = scrapy.Field()
+    synergySta = scrapy.Field()
+    # desc = scrapy.Field()
 
 
 class TraitItem(scrapy.Item):

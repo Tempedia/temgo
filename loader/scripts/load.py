@@ -5,7 +5,7 @@ import json
 from unicodedata import name
 from django.db import transaction
 
-from temtem.models import Temtem, TemtemTrait, Type
+from temtem.models import Temtem, TemtemTechnique, TemtemTrait, Type
 import shutil
 from pathlib import Path
 from bs4 import BeautifulSoup
@@ -28,6 +28,8 @@ def copyfile(src, dst):
 
 def updateHTML(html):
     '''更新HTML文本，给图片添加前缀'''
+    if not html:
+        return ''
     s = BeautifulSoup(html, 'html.parser')
     for a in s.find_all('a'):
         a.unwrap()
@@ -78,9 +80,9 @@ def loadTemtem(path):
         tvYield = t['tvYield']
         for k in t['tvYield']:
             if t['tvYield'][k]:
-                tvYield[k]=int(t['tvYield'][k])
+                tvYield[k] = int(t['tvYield'][k])
             else:
-                tvYield[k]=0
+                tvYield[k] = 0
         evolvesTo = []
         for e in t['evolvesTo']:
             m = {
@@ -163,13 +165,14 @@ def loadTemtem(path):
         )
         tem.save()
 
+
 @transaction.atomic
 def loadTemtemTrait(path):
     TemtemTrait.objects.all().delete()
     traits = json.load(open(path))
     for t in traits:
-        desc=updateHTML(t['desc']).td.encode_contents().decode()
-        trait=TemtemTrait(
+        desc = updateHTML(t['desc']).td.encode_contents().decode()
+        trait = TemtemTrait(
             name=t['name'],
             description=desc,
             impact=t['impact'],
@@ -177,6 +180,49 @@ def loadTemtemTrait(path):
             effect=t['effect'],
         )
         trait.save()
+
+
+@transaction.atomic
+def loadTemtemTechnique(path):
+    TemtemTechnique.objects.all().delete()
+    techniques = json.load(open(path))
+    for t in techniques:
+        desc = ''
+        i = updateHTML(t['desc'])
+        if i:
+            desc = i.i.encode_contents().decode()
+        technique = TemtemTechnique(
+            name=t['name'],
+            type=t['type'],
+            cls=t['clas'],
+            damage=t['dmg'],
+            sta_cost=t['sta'],
+            hold=t['hold'],
+            priority=t['priority'],
+            targeting=t['targeting'],
+            description=desc,
+            video=copyfile(t['video']['path'], filesfolder),
+        )
+
+        if t.get('synergyType'):
+            synergyDesc = ''
+            synergyEffects = ''
+            i = updateHTML(t.get('synergyDesc'))
+            if i:
+                synergyDesc = i.i.encode_contents().decode()
+            i = updateHTML(t.get('synergyEffects'))
+            if i:
+                synergyEffects = i.td.encode_contents().decode()
+            technique.synergy_description = synergyDesc
+            technique.synergy_type = t['synergyType']
+            technique.synergy_effects = synergyEffects
+            technique.synergy_damage = t.get('synergyDamage', 0)
+            technique.synergy_sta_cost = t.get('synergySta', 0)
+            technique.synergy_priority = t.get('synergyPriority', 0)
+            technique.synergy_targeting = t.get('synergyTargeting', '')
+            technique.synergy_video = copyfile(
+                t['synergyVideo']['path'], filesfolder),
+        technique.save()
 
 
 def run(*args):
@@ -188,4 +234,4 @@ def run(*args):
     loadType(os.path.join(folder, 'type.json'))
     loadTemtem(os.path.join(folder, 'temtem.json'))
     loadTemtemTrait(os.path.join(folder, 'trait.json'))
-
+    loadTemtemTechnique(os.path.join(folder, 'technique.json'))
