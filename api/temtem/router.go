@@ -21,4 +21,7 @@ func Register(router *echo.Group) {
 	/* Trait */
 	router.GET("/temtem/traits", FindTemtemTraits)
 	router.GET("/temtem/trait/:name", GetTemtemTrait)
+
+	/* Technique */
+	router.GET("/temtem/:name/techniques", FindTemtemTechniquesByTemtem)
 }

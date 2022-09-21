@@ -5,7 +5,7 @@ import json
 from unicodedata import name
 from django.db import transaction
 
-from temtem.models import Temtem, TemtemTechnique, TemtemTrait, Type
+from temtem.models import Temtem, TemtemBreedingTechnique, TemtemCourseTechnique, TemtemLevelingUpTechnique, TemtemTechnique, TemtemTrait, Type
 import shutil
 from pathlib import Path
 from bs4 import BeautifulSoup
@@ -70,6 +70,9 @@ def loadType(path):
 @transaction.atomic
 def loadTemtem(path):
     Temtem.objects.all().delete()
+    TemtemLevelingUpTechnique.objects.all().delete()
+    TemtemBreedingTechnique.objects.all().delete()
+    TemtemCourseTechnique.objects.all().delete()
     temtems = json.load(open(path))
     for t in temtems:
         icon = copyfile(t['normalIcon']['path'], filesfolder)
@@ -158,12 +161,36 @@ def loadTemtem(path):
             evolves_to=evolvesTo,
             stats=stats,
             type_matchup=t['typeMatchup'],
-            techniques=t['techniques'],
+            # techniques=t['techniques'],
             trivia=trivia,
             gallery=gallery,
             renders=renders,
         )
         tem.save()
+        for tech in t['techniques']['leveling_up']:
+            technique = TemtemLevelingUpTechnique(
+                temtem=tem.name,
+                level=tech['level'],
+                technique_name=tech['technique'],
+                stab=tech['stab'],
+            )
+            technique.save()
+        for tech in t['techniques']['course']:
+            technique = TemtemCourseTechnique(
+                temtem=tem.name,
+                course=tech['course'],
+                technique_name=tech['technique'],
+                stab=tech['stab'],
+            )
+            technique.save()
+        for tech in t['techniques']['breeding']:
+            technique = TemtemBreedingTechnique(
+                temtem=tem.name,
+                parents=tech['parents'],
+                technique_name=tech['technique'],
+                stab=tech['stab'],
+            )
+            technique.save()
 
 
 @transaction.atomic
@@ -232,6 +259,6 @@ def run(*args):
     print('文件保存在: %s' % filesfolder)
     folder = args[0]
     loadType(os.path.join(folder, 'type.json'))
-    loadTemtem(os.path.join(folder, 'temtem.json'))
     loadTemtemTrait(os.path.join(folder, 'trait.json'))
     loadTemtemTechnique(os.path.join(folder, 'technique.json'))
+    loadTemtem(os.path.join(folder, 'temtem.json'))

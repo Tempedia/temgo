@@ -67,29 +67,11 @@ type TemtemStats struct {
 	SPDEF TemtemStatsItem `json:"SPDEF" jsonb:"SPDEF"`
 }
 
-type TemtemCourseTechnique struct {
-	Stab      bool   `json:"stab" jsonb:"stab"`
-	Course    string `json:"course" jsonb:"course"`
-	Technique string `json:"technique" jsonb:"technique"`
-}
-
-type TemtemLevelingUpTechnique struct {
-	Stab      bool   `json:"stab" jsonb:"stab"`
-	Level     int    `json:"level" jsonb:"level"`
-	Technique string `json:"technique" jsonb:"technique"`
-}
-
-type TemtemBreedingTechnique struct {
-	Stab      bool     `json:"stab" jsonb:"stab"`
-	Parents   []string `json:"parents" jsonb:"parents"`
-	Technique string   `json:"technique" jsonb:"technique"`
-}
-
-type TemtemTechniques struct {
-	Course     []TemtemCourseTechnique     `json:"course" jsonb:"course"`
-	LevelingUp []TemtemLevelingUpTechnique `json:"leveling_up" jsonb:"leveling_up"`
-	Breeding   []TemtemBreedingTechnique   `json:"breeding" jsonb:"breeding"`
-}
+// type TemtemTechniques struct {
+// 	Course     []TemtemCourseTechnique     `json:"course" jsonb:"course"`
+// 	LevelingUp []TemtemLevelingUpTechnique `json:"leveling_up" jsonb:"leveling_up"`
+// 	Breeding   []TemtemBreedingTechnique   `json:"breeding" jsonb:"breeding"`
+// }
 
 type TemtemGallery struct {
 	Text   string `json:"text" jsonb:"text"`
@@ -118,7 +100,7 @@ type Temtem struct {
 	EvolvesTo   []TemtemEvolvesTo        `bun:"evolves_to,notnull,nullzero,type:jsonb" json:"evolves_to"`
 	Stats       TemtemStats              `bun:"stats,notnull,type:jsonb" json:"stats"`
 	TypeMatchup []map[string]interface{} `bun:"type_matchup,notnull,nullzero,type:jsonb" json:"type_matchup"`
-	Techniques  TemtemTechniques         `bun:"techniques,notnull,nullzero,type:jsonb" json:"techniques"`
+	// Techniques  TemtemTechniques         `bun:"techniques,notnull,nullzero,type:jsonb" json:"techniques"`
 
 	Trivia []string `bun:"trivia,notnull,nullzero,array" json:"trivia"`
 
@@ -133,4 +115,60 @@ type TemtemTrait struct {
 	Impact        string `bun:"impact,notnull,nullzero" json:"impact"`
 	Trigger       string `bun:"trigger,notnull,nullzero" json:"trigger"`
 	Effect        string `bun:"effect,notnull,nullzero" json:"effect"`
+}
+
+type TemtemTechnique struct {
+	bun.BaseModel `bun:"table:temtem_technique"`
+	Name          string `bun:"name,notnull,pk" json:"name"`
+	Type          string `bun:"type,notnull" json:"type"`
+	Class         string `bun:"class,notnull" json:"class"`
+	Damage        int    `bun:"damage,notnull,nullzero" json:"damage"`
+	STACost       int    `bun:"sta_cost,notnull,nullzero" json:"sta_cost"`
+	Hold          int    `bun:"hold,notnull,nullzero" json:"hold"`
+	Priority      int    `bun:"priority,notnull,nullzero" json:"priority"`
+	Targeting     string `bun:"targeting,notnull,nullzero" json:"targeting"`
+	Description   string `bun:"description,notnull,nullzero" json:"description"`
+	Video         string `bun:"video,notnull,nullzero" json:"video"`
+
+	SynergyType        string `bun:"synergy_type,notnull,nullzero" json:"synergy_type"`
+	SynergyDescription string `bun:"synergy_description,notnull,nullzero" json:"synergy_description"`
+	SynergyEffects     string `bun:"synergy_effects,notnull,nullzero" json:"synergy_effects"`
+	SynergyDamage      int    `bun:"synergy_damage,notnull,nullzero" json:"synergy_damage"`
+	SynergySTACost     int    `bun:"synergy_sta_cost,notnull,nullzero" json:"synergy_sta_cost"`
+	SynergyPriority    int    `bun:"synergy_priority,notnull,nullzero" json:"synergy_priority"`
+	SynergyTargeting   string `bun:"synergy_targeting,notnull,nullzero" json:"synergy_targeting"`
+	SynergyVideo       string `bun:"synergy_video,notnull,nullzero" json:"synergy_video"`
+}
+
+type TemtemCourseTechnique struct {
+	bun.BaseModel `bun:"table:temtem_course_technique"`
+	ID            int64  `bun:"id,notnull,pk" json:"-"`
+	Temtem        string `bun:"temtem,notnull" json:"temtem"`
+	Stab          bool   `bun:"stab,notnull,nullzero" json:"stab"`
+	Course        string `bun:"course,notnull" json:"course"`
+	TechniqueName string `bun:"technique_name,notnull" json:"technique_name"`
+
+	Technique *TemtemTechnique `bun:"rel:belongs-to,join:technique_name=name" json:"technique"`
+}
+
+type TemtemLevelingUpTechnique struct {
+	bun.BaseModel `bun:"table:temtem_leveling_up_technique"`
+	ID            int64  `bun:"id,notnull,pk" json:"-"`
+	Temtem        string `bun:"temtem,notnull" json:"temtem"`
+	Stab          bool   `bun:"stab,notnull,nullzero" json:"stab"`
+	Level         int    `bun:"level,notnull" json:"level"`
+	TechniqueName string `bun:"technique_name,notnull" json:"technique_name"`
+
+	Technique *TemtemTechnique `bun:"rel:belongs-to,join:technique_name=name" json:"technique"`
+}
+
+type TemtemBreedingTechnique struct {
+	bun.BaseModel `bun:"table:temtem_breeding_technique"`
+	ID            int64    `bun:"id,notnull,pk" json:"-"`
+	Temtem        string   `bun:"temtem,notnull" json:"temtem"`
+	Stab          bool     `bun:"stab,notnull,nullzero" json:"stab"`
+	Parents       []string `bun:"parents,notnull,array" json:"parents"`
+	TechniqueName string   `bun:"technique_name,notnull" json:"technique_name"`
+
+	Technique *TemtemTechnique `bun:"rel:belongs-to,join:technique_name=name" json:"technique"`
 }

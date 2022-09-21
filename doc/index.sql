@@ -23,3 +23,15 @@ CREATE INDEX ON "temtem"(("stats"->'SPDEF'->'base'));
 
 
 CREATE INDEX ON "temtem_trait" USING GIN("name" gin_trgm_ops);
+
+CREATE INDEX ON "temtem_leveling_up_technique"("temtem");
+CREATE INDEX ON "temtem_leveling_up_technique"("level");
+CREATE INDEX ON "temtem_leveling_up_technique"("technique");
+
+CREATE INDEX ON "temtem_course_technique"("temtem");
+CREATE INDEX ON "temtem_course_technique" USING GIN("course" gin_trgm_ops);
+CREATE INDEX ON "temtem_course_technique"("technique");
+
+CREATE INDEX ON "temtem_breeding_technique"("temtem");
+CREATE INDEX ON "temtem_breeding_technique" USING GIN("parents");
+CREATE INDEX ON "temtem_breeding_technique"("technique");

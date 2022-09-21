@@ -38,7 +38,7 @@ class Temtem(models.Model):
     evolves_to = models.JSONField()  # 进化到
     stats = models.JSONField()
     type_matchup = models.JSONField()
-    techniques = models.JSONField()
+    # techniques = models.JSONField()
     trivia = ArrayField(models.TextField())
     gallery = models.JSONField()
     renders = models.JSONField()
@@ -101,3 +101,33 @@ class TemtemTechnique(models.Model):
 
     class Meta:
         db_table = "temtem_technique"
+
+
+class TemtemLevelingUpTechnique(models.Model):
+    temtem = models.CharField(max_length=64)
+    level = models.SmallIntegerField()
+    technique_name = models.CharField(max_length=64)
+    stab = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = "temtem_leveling_up_technique"
+
+
+class TemtemCourseTechnique(models.Model):
+    temtem = models.CharField(max_length=64)
+    course = models.CharField(max_length=32)
+    technique_name = models.CharField(max_length=64)
+    stab = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = "temtem_course_technique"
+
+
+class TemtemBreedingTechnique(models.Model):
+    temtem = models.CharField(max_length=64)
+    parents = ArrayField(models.CharField(max_length=64))
+    technique_name = models.CharField(max_length=64)
+    stab = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = "temtem_breeding_technique"

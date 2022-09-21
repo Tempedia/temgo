@@ -96,11 +96,11 @@ class TechniqueSpider(scrapy.Spider):
             if priority:
                 item['synergyPriority'] = int(priority.split('_')[0])
             item['synergyDamage'] = int(synergy.css(
-                r'th:contains("Damage") + td::text').get('0'))
+                r'th:contains("Damage") + td::text').get('-1'))
             item['synergyEffects'] = synergy.css(
                 r'th:contains("Effects") + td').get('')
             item['synergySta'] = int(synergy.css(
-                r'th:contains("STA Cost") + td::text').get('0'))
+                r'th:contains("STA Cost") + td::text').get('-1'))
             item['synergyTargeting'] = synergy.css(
                 r'th:contains("Targeting") + td a::text').get('').strip()
             item['synergyDesc'] = synergy.css(
