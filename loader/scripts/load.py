@@ -141,8 +141,8 @@ def loadTemtem(path):
             trivia.append(updateHTML(tt).li.encode_contents().decode())
         description = {}
         for k in t['description']:
-            description[k] = updateHTML(
-                t['description'][k]).encode_contents().decode()
+            html=updateHTML(t['description'][k])
+            description[k] = html.encode_contents().decode() if html else None
         tem = Temtem(
             no=t['no'],
             name=t['name'],

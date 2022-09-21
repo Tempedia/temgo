@@ -62,6 +62,14 @@ class TypeSpider(scrapy.Spider):
         description = {'Physical Appearance': '', 'Tempedia': ''}
         description['Physical Appearance'] = parseStrList(response.css(
             r'.mw-parser-output > h3:contains("Physical Appearance") ~ p').getall())
+        appearance=[]
+        x=response.css(r'.mw-parser-output > h3:contains("Physical Appearance")')
+        while True:
+            x=x.css(r':scope + *')
+            if x.xpath('name()').get() in ('h3','h2'):
+                break
+            appearance.append(x.get())
+        description['Physical Appearance']=parseStrList(appearance)
         description['Tempedia'] = response.css(
             r'.mw-parser-output > h3:contains("Tempedia") + p >i::text').get()
 
