@@ -159,6 +159,8 @@ type TemtemLevelingUpTechnique struct {
 	Level         int    `bun:"level,notnull" json:"level"`
 	TechniqueName string `bun:"technique_name,notnull" json:"technique_name"`
 
+	Group string `bun:"group,notnull,nullzero" json:"group"`
+
 	Technique *TemtemTechnique `bun:"rel:belongs-to,join:technique_name=name" json:"technique"`
 }
 

@@ -12,7 +12,7 @@ func FindTemtemLevelingUpTechniques(name string) ([]*TemtemLevelingUpTechnique, 
 	techniques := make([]*TemtemLevelingUpTechnique, 0)
 
 	if err := db.PG().NewSelect().Model(&techniques).Relation(`Technique`).
-		Where(`"temtem"=?`, name).Order(`level ASC`).Scan(context.Background()); err != nil {
+		Where(`"temtem"=?`, name).Order(`id ASC`).Scan(context.Background()); err != nil {
 		log.Errorf("DB Error: %v", err)
 		return nil, err
 	}

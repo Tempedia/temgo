@@ -108,6 +108,7 @@ class TemtemLevelingUpTechnique(models.Model):
     level = models.SmallIntegerField()
     technique_name = models.CharField(max_length=64)
     stab = models.BooleanField(default=False)
+    group = models.CharField(max_length=32, default='')
 
     class Meta:
         db_table = "temtem_leveling_up_technique"

@@ -141,7 +141,7 @@ def loadTemtem(path):
             trivia.append(updateHTML(tt).li.encode_contents().decode())
         description = {}
         for k in t['description']:
-            html=updateHTML(t['description'][k])
+            html = updateHTML(t['description'][k])
             description[k] = html.encode_contents().decode() if html else None
         tem = Temtem(
             no=t['no'],
@@ -173,6 +173,7 @@ def loadTemtem(path):
                 level=tech['level'],
                 technique_name=tech['technique'],
                 stab=tech['stab'],
+                group=tech.get('group', '') or '',
             )
             technique.save()
         for tech in t['techniques']['course']:

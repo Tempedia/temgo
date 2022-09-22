@@ -62,14 +62,15 @@ class TypeSpider(scrapy.Spider):
         description = {'Physical Appearance': '', 'Tempedia': ''}
         description['Physical Appearance'] = parseStrList(response.css(
             r'.mw-parser-output > h3:contains("Physical Appearance") ~ p').getall())
-        appearance=[]
-        x=response.css(r'.mw-parser-output > h3:contains("Physical Appearance")')
+        appearance = []
+        x = response.css(
+            r'.mw-parser-output > h3:contains("Physical Appearance")')
         while True:
-            x=x.css(r':scope + *')
-            if x.xpath('name()').get() in ('h3','h2'):
+            x = x.css(r':scope + *')
+            if x.xpath('name()').get() in ('h3', 'h2'):
                 break
             appearance.append(x.get())
-        description['Physical Appearance']=parseStrList(appearance)
+        description['Physical Appearance'] = parseStrList(appearance)
         description['Tempedia'] = response.css(
             r'.mw-parser-output > h3:contains("Tempedia") + p >i::text').get()
 
@@ -188,7 +189,7 @@ class TypeSpider(scrapy.Spider):
                         elif tdclass == 'resist--4':
                             v = 4
                         elif tdclass == 'resist--025':
-                            v=0.25
+                            v = 0.25
                         m[tmap[i]] = v
                     else:
                         m['name'] = td.css('::text').get().strip()
@@ -200,7 +201,7 @@ class TypeSpider(scrapy.Spider):
 
         typeMatchup = []
         tabs = response.css(
-            r'.mw-parser-output > h2:contains("Type Matchup") + div.koish-tabs')
+            r'.mw-parser-output > h2:contains("Type Matchup") + div.koish-tabs,.mw-parser-output > h2:contains("Type Matchup") + p + div.koish-tabs')
         if not tabs:  # 没有分组
             typeMatchup = extractMatchup(response, None)
         else:   # 分组
@@ -215,19 +216,55 @@ class TypeSpider(scrapy.Spider):
             'breeding': [],
         }
         # 升级技能
-        for tr in response.css(
-                r'.mw-parser-output > h3:contains("By Leveling up") + table.learnlist tbody tr:not(:last-child)'):
-            if not tr.css('td:nth-child(2)'):
-                continue
-            levelStr = tr.css(r'td:first-child::text').get().strip()
-            level = int(levelStr) if levelStr != '?' else 0
-            stab = bool(tr.css(r'td:nth-child(2) > i'))
-            technique = tr.css(r'td:nth-child(2) a::text').get('').strip()
-            techniques['leveling_up'].append({
-                'level': level,
-                'stab': stab,
-                'technique': technique,
-            })
+
+        def extractLevelingUpTechniques(response, group=None):
+            rt = []
+            for tr in response.css(r'tbody tr:not(:last-child)'):
+                if not tr.css('td:nth-child(2)'):
+                    continue
+                levelStr = tr.css(r'td:first-child::text').get().strip()
+                level = int(levelStr) if levelStr != '?' else 0
+                stab = bool(tr.css(r'td:nth-child(2) > i'))
+                technique = tr.css(r'td:nth-child(2) a::text').get('').strip()
+                rt.append({
+                    'level': level,
+                    'stab': stab,
+                    'technique': technique,
+                    'group': group,
+                })
+            return rt
+        table = response.css(
+            r'.mw-parser-output > h3:contains("By Leveling up") + table.learnlist')
+        if table:
+            techniques['leveling_up'] = extractLevelingUpTechniques(table)
+        else:
+            tabs = response.css(
+                r'.mw-parser-output > h3:contains("By Leveling up") + div.koish-tabs')
+            if not tabs:
+                table = response.css(
+                    r'.mw-parser-output > h2:contains("Techniques") + table.learnlist')
+                if not table:
+                    raise Exception('no Leveling Up Techniques')
+                techniques['leveling_up'] = extractLevelingUpTechniques(table)
+            else:
+                for tab in tabs.css(r'div.tabber article'):
+                    group = tab.css(r'::attr(title)').get('')
+                    table = tab.css(r'table.learnlist')
+                    rt = extractLevelingUpTechniques(table, group)
+                    techniques['leveling_up'].extend(rt)
+        # for tr in response.css(
+        #         r'.mw-parser-output > h3:contains("By Leveling up") + table.learnlist tbody tr:not(:last-child)'):
+        #     if not tr.css('td:nth-child(2)'):
+        #         continue
+        #     levelStr = tr.css(r'td:first-child::text').get().strip()
+        #     level = int(levelStr) if levelStr != '?' else 0
+        #     stab = bool(tr.css(r'td:nth-child(2) > i'))
+        #     technique = tr.css(r'td:nth-child(2) a::text').get('').strip()
+        #     techniques['leveling_up'].append({
+        #         'level': level,
+        #         'stab': stab,
+        #         'technique': technique,
+        #     })
         # 教程技能
         for tr in response.css(
                 r'.mw-parser-output > h3:contains("By Technique Course") + table.learnlist tbody tr:not(:last-child)'):
