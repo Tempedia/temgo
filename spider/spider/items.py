@@ -67,6 +67,7 @@ class TemtemItem(scrapy.Item):
     trivia = scrapy.Field()
     gallery = scrapy.Field()
     renders = scrapy.Field()
+    subspecies = scrapy.Field()
 
 
 class TechniqueItem(scrapy.Item):

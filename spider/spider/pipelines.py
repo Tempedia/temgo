@@ -100,7 +100,10 @@ class TemtemImagesPipeline2(FilesPipeline):
                     if isinstance(v, TemtemImagesItem):
                         for url in v['image_urls']:
                             if x['url'] == url['url']:
-                                x['text'] = url['text']
+                                if 'text' in url:
+                                    x['text'] = url['text']
+                                if 'group' in url:
+                                    x['group'] = url['group']
                                 m[k].append(x)
         for k, v in m.items():
             item[k] = v

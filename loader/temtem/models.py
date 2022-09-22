@@ -1,3 +1,4 @@
+from email.policy import default
 from pyexpat import model
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
@@ -42,6 +43,8 @@ class Temtem(models.Model):
     trivia = ArrayField(models.TextField())
     gallery = models.JSONField()
     renders = models.JSONField()
+
+    subspecies = models.JSONField(default=[])
 
     class Meta:
         db_table = "temtem"

@@ -78,6 +78,12 @@ type TemtemGallery struct {
 	FileID string `json:"fileid" jsonb:"fileid"`
 }
 
+type TemtemSubspecie struct {
+	Type     string `json:"type" jsonb:"type"`
+	Icon     string `json:"icon" jsonb:"icon"`
+	LumaIcon string `json:"luma_icon" jsonb:"luma_icon"`
+}
+
 type Temtem struct {
 	bun.BaseModel           `bun:"table:temtem"`
 	NO                      int               `bun:"no,pk" json:"no"`
@@ -100,9 +106,10 @@ type Temtem struct {
 	EvolvesTo   []TemtemEvolvesTo        `bun:"evolves_to,notnull,nullzero,type:jsonb" json:"evolves_to"`
 	Stats       TemtemStats              `bun:"stats,notnull,type:jsonb" json:"stats"`
 	TypeMatchup []map[string]interface{} `bun:"type_matchup,notnull,nullzero,type:jsonb" json:"type_matchup"`
-	// Techniques  TemtemTechniques         `bun:"techniques,notnull,nullzero,type:jsonb" json:"techniques"`
 
 	Trivia []string `bun:"trivia,notnull,nullzero,array" json:"trivia"`
+
+	Subspecies []TemtemSubspecie `bun:"subspecies,notnull,nullzero,type:jsonb" json:"subspecies"`
 
 	Gallery []TemtemGallery `bun:"gallery,notnull,nullzero,type:jsonb" json:"gallery"`
 	Renders []TemtemGallery `bun:"renders,notnull,nullzero,type:jsonb" json:"renders"`

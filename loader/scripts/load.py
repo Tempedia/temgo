@@ -143,6 +143,26 @@ def loadTemtem(path):
         for k in t['description']:
             html = updateHTML(t['description'][k])
             description[k] = html.encode_contents().decode() if html else None
+        subspecies = []
+        for s in t['subspecies']:
+            flag = False
+            for ss in subspecies:
+                if s['group'] == ss['type']:
+                    if s['text'] == 'normal':
+                        ss['icon'] = copyfile(s['path'], filesfolder)
+                    elif s['text'] == 'luma':
+                        ss['luma_icon'] = copyfile(s['path'], filesfolder)
+                    flag = True
+                    break
+            if not flag:
+                tt = {
+                    'type': s['group'],
+                }
+                if s['text'] == 'normal':
+                    tt['icon'] = copyfile(s['path'], filesfolder)
+                elif s['text'] == 'luma':
+                    tt['luma_icon'] = copyfile(s['path'], filesfolder)
+                subspecies.append(tt)
         tem = Temtem(
             no=t['no'],
             name=t['name'],
@@ -165,6 +185,7 @@ def loadTemtem(path):
             trivia=trivia,
             gallery=gallery,
             renders=renders,
+            subspecies=subspecies,
         )
         tem.save()
         for tech in t['techniques']['leveling_up']:

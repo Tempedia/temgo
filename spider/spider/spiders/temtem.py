@@ -248,7 +248,7 @@ class TypeSpider(scrapy.Spider):
                 techniques['leveling_up'] = extractLevelingUpTechniques(table)
             else:
                 for tab in tabs.css(r'div.tabber article'):
-                    group = tab.css(r'::attr(title)').get('')
+                    group = tab.css(r'::attr(title)').get('').strip()
                     table = tab.css(r'table.learnlist')
                     rt = extractLevelingUpTechniques(table, group)
                     techniques['leveling_up'].extend(rt)
@@ -323,6 +323,31 @@ class TypeSpider(scrapy.Spider):
                 'text': ' '.join(texts),
             })
 
+        subspecies = TemtemImagesItem(image_urls=[])
+        tabs = response.css(
+            r'.mw-parser-output > h3:contains("Subspecies Variations") + p + div.koish-tabs')
+        if tabs:
+            image_urls = []
+            for tab in tabs.css(r'div.tabber article'):
+                group = tab.css(r'::attr(title)').get('').strip()
+                url = tab.css(
+                    r'table.wikitable tbody tr:nth-child(2) td:nth-child(1) a::attr(href)').get('')
+                text = 'normal'
+                image_urls.append({
+                    'url': response.urljoin(url),
+                    'text': text,
+                    'group': group,
+                })
+                url = tab.css(
+                    r'table.wikitable tbody tr:nth-child(2) td:nth-child(2) a::attr(href)').get('')
+                text = 'luma'
+                image_urls.append({
+                    'url': response.urljoin(url),
+                    'text': text,
+                    'group': group,
+                })
+            subspecies = TemtemImagesItem(image_urls=image_urls)
+
         yield TemtemItem(
             name=name,
             no=no,
@@ -346,4 +371,5 @@ class TypeSpider(scrapy.Spider):
             trivia=trivia,
             gallery=gallery,
             renders=renders,
+            subspecies=subspecies,
         )
