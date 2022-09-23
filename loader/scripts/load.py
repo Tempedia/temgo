@@ -265,9 +265,9 @@ def loadTemtemTechnique(path):
             technique.synergy_description = synergyDesc
             technique.synergy_type = t['synergyType']
             technique.synergy_effects = synergyEffects
-            technique.synergy_damage = t.get('synergyDamage', 0)
-            technique.synergy_sta_cost = t.get('synergySta', 0)
-            technique.synergy_priority = t.get('synergyPriority', 0)
+            technique.synergy_damage = t.get('synergyDamage', -1)
+            technique.synergy_sta_cost = t.get('synergySta', -1)
+            technique.synergy_priority = t.get('synergyPriority', -1)
             technique.synergy_targeting = t.get('synergyTargeting', '')
             technique.synergy_video = copyfile(
                 t['synergyVideo']['path'], filesfolder),
