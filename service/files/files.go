@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path"
 )
 
 var _filesfolder string
@@ -24,4 +25,8 @@ func Init(folder string) error {
 
 func Folder() string {
 	return _filesfolder
+}
+
+func FilePath(file string) string {
+	return path.Join(_filesfolder, file)
 }

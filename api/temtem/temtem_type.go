@@ -4,6 +4,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"gitlab.com/wiky.lyu/temgo/api/middleware"
 	temtemdb "gitlab.com/wiky.lyu/temgo/db/temtem"
+	"gitlab.com/wiky.lyu/temgo/service/files"
 	"gitlab.com/wiky.lyu/temgo/x"
 )
 
@@ -27,6 +28,21 @@ func GetTemtemType(c echo.Context) error {
 		return err
 	}
 	return ctx.SuccessOr404(t)
+}
+
+/* 根据属性名获取属性图标 */
+func GetTemtemTypeIcon(c echo.Context) error {
+	ctx := c.(*middleware.Context)
+
+	name := ctx.Param(`name`)
+
+	t, err := temtemdb.GetTemtemType(name)
+	if err != nil {
+		return err
+	} else if t == nil {
+		return ctx.NotFound()
+	}
+	return ctx.File(files.FilePath(t.Icon))
 }
 
 type UpdateTemtemTypeRequest struct {

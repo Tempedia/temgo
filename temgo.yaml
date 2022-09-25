@@ -1,5 +1,5 @@
 http:
-  listen: 127.0.0.1:9999
+  listen: 0.0.0.0:9999
   debug: true
   sesson: "ywe4&u@vCdKi91&Jo3J@14@th8Ae2Np*"
 
