@@ -7,11 +7,12 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"github.com/uptrace/bun"
+	"github.com/uptrace/bun/dialect/pgdialect"
 	"gitlab.com/wiky.lyu/temgo/db"
 	"gitlab.com/wiky.lyu/temgo/x"
 )
 
-func FindTemtems(query, type_, sort string, page, pageSize int) ([]*Temtem, int, error) {
+func FindTemtems(query string, type_ []string, sort string, page, pageSize int) ([]*Temtem, int, error) {
 	temtems := make([]*Temtem, 0)
 
 	q := db.PG().NewSelect().Model(&temtems)
@@ -24,8 +25,8 @@ func FindTemtems(query, type_, sort string, page, pageSize int) ([]*Temtem, int,
 			return q
 		})
 	}
-	if type_ != "" {
-		q = q.Where(`?=ANY("type")`, type_)
+	if len(type_) > 0 {
+		q = q.Where(`"type" @> ?`, pgdialect.Array(type_))
 	}
 
 	total, err := q.Count(context.Background())

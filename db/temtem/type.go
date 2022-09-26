@@ -24,7 +24,7 @@ type TemtemGenderRatio struct {
 
 type TemtemDescription struct {
 	PhysicalAppearance string `json:"Physical Appearance" jsonb:"Physical Appearance"`
-	Tempedia           string `json:"tempedia" jsonb:"tempedia"`
+	Tempedia           string `json:"Tempedia" jsonb:"Tempedia"`
 }
 
 type TemtemTVYield struct {

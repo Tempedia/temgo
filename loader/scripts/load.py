@@ -142,7 +142,7 @@ def loadTemtem(path):
         description = {}
         for k in t['description']:
             html = updateHTML(t['description'][k])
-            description[k] = html.encode_contents().decode() if html else None
+            description[k] = html.encode_contents().decode() if html else ''
         subspecies = []
         for s in t['subspecies']:
             flag = False
@@ -269,7 +269,8 @@ def loadTemtemTechnique(path):
             technique.synergy_sta_cost = t.get('synergySta', -1)
             technique.synergy_priority = t.get('synergyPriority', -1)
             technique.synergy_targeting = t.get('synergyTargeting', '')
-            technique.synergy_video = copyfile(t['synergyVideo']['path'], filesfolder)
+            technique.synergy_video = copyfile(
+                t['synergyVideo']['path'], filesfolder)
         technique.save()
 
 
