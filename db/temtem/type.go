@@ -14,7 +14,7 @@ type TemtemType struct {
 	ResistantTo        []string `bun:"resistant_to,array,notnull,nullzero" json:"resistant_to"`
 	WeakTo             []string `bun:"weak_to,array,notnull,nullzero" json:"weak_to"`
 
-	Sort int `bun:"sort,notnull,nullzero" json:"-"`
+	Sort int `bun:"sort,notnull,nullzero" json:"sort"`
 }
 
 type TemtemGenderRatio struct {
