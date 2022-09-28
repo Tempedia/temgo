@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"net/http"
+	"net/url"
 	"reflect"
 	"strconv"
 	"strings"
@@ -15,6 +16,15 @@ type Context struct {
 	echo.Context
 
 	Staff *staffdb.Staff
+}
+
+func (c *Context) Param(key string) string {
+	v := c.Context.Param(key)
+	r, err := url.PathUnescape(v)
+	if err != nil {
+		return v
+	}
+	return r
 }
 
 func (c *Context) IntParam(key string) int64 {
