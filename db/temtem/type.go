@@ -76,6 +76,7 @@ type TemtemStats struct {
 type TemtemGallery struct {
 	Text   string `json:"text" jsonb:"text"`
 	FileID string `json:"fileid" jsonb:"fileid"`
+	Group  string `json:"group" jsonb:"group"`
 }
 
 type TemtemSubspecie struct {

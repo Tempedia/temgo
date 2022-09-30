@@ -303,25 +303,39 @@ class TypeSpider(scrapy.Spider):
             src = li.css(r'div.thumb a.image::attr(href)').get()
             if not src:
                 continue
-            texts = []
-            for t in li.css(r'div.gallerytext p::text').getall():
-                texts.append(t.strip())
             gallery['image_urls'].append({
                 'url': response.urljoin(src),
-                'text': ' '.join(texts),
+                'text': li.css(r'div.gallerytext p').get(),
             })
+
+        # Renders
         renders = TemtemImagesItem(image_urls=[])
-        for li in response.css(r'.mw-parser-output > h3:contains("Renders") + ul.gallery li '):
-            src = li.css(r'div.thumb a.image::attr(href)').get()
-            if not src:
-                continue
-            texts = []
-            for t in li.css(r'div.gallerytext p::text').getall():
-                texts.append(t.strip())
-            renders['image_urls'].append({
-                'url': response.urljoin(src),
-                'text': ' '.join(texts),
-            })
+        ul = response.css(
+            r'.mw-parser-output > h3:contains("Renders") + ul.gallery')
+        if ul:
+            for li in ul.css('li'):
+                src = li.css(r'div.thumb a.image::attr(href)').get()
+                if not src:
+                    continue
+                renders['image_urls'].append({
+                    'url': response.urljoin(src),
+                    'text': li.css(r'div.gallerytext p').get(),
+                })
+        else:
+            tabs = response.css(
+                r'.mw-parser-output > h3:contains("Renders") + div.koish-tabs')
+            if tabs:
+                for tab in tabs.css(r'div.tabber article'):
+                    group = tab.css(r'::attr(title)').get('').strip()
+                    for li in tab.css(r'ul.gallery li'):
+                        src = li.css(r'div.thumb a.image::attr(href)').get()
+                        if not src:
+                            continue
+                        renders['image_urls'].append({
+                            'url': response.urljoin(src),
+                            'text': li.css(r'div.gallerytext p').get(),
+                            'group': group,
+                        })
 
         subspecies = TemtemImagesItem(image_urls=[])
         tabs = response.css(

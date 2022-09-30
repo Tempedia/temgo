@@ -126,15 +126,18 @@ def loadTemtem(path):
             }
         gallery = []
         for g in t['gallery']:
+            html = updateHTML(g['text'])
             gallery.append({
                 'fileid': copyfile(g['path'], filesfolder),
-                'text': g['text']
+                'text': html.p.encode_contents().decode() if html else ''
             })
         renders = []
         for g in t['renders']:
+            html = updateHTML(g['text'])
             renders.append({
                 'fileid': copyfile(g['path'], filesfolder),
-                'text': g['text']
+                'text': html.p.encode_contents().decode() if html else '',
+                'group': g['group'] if 'group' in g else '',
             })
         trivia = []
         for tt in t['trivia']:
