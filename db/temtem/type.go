@@ -172,13 +172,18 @@ type TemtemLevelingUpTechnique struct {
 	Technique *TemtemTechnique `bun:"rel:belongs-to,join:technique_name=name" json:"technique"`
 }
 
+type TemtemBreedingTechniqueParent struct {
+	Name string `json:"name" jsonb:"name"`
+	Hint string `json:"hint" jsonb:"hint"`
+}
+
 type TemtemBreedingTechnique struct {
 	bun.BaseModel `bun:"table:temtem_breeding_technique"`
-	ID            int64    `bun:"id,notnull,pk" json:"-"`
-	Temtem        string   `bun:"temtem,notnull" json:"temtem"`
-	Stab          bool     `bun:"stab,notnull,nullzero" json:"stab"`
-	Parents       []string `bun:"parents,notnull,array" json:"parents"`
-	TechniqueName string   `bun:"technique_name,notnull" json:"technique_name"`
+	ID            int64                           `bun:"id,notnull,pk" json:"-"`
+	Temtem        string                          `bun:"temtem,notnull" json:"temtem"`
+	Stab          bool                            `bun:"stab,notnull,nullzero" json:"stab"`
+	Parents       []TemtemBreedingTechniqueParent `bun:"parents,notnull,type:jsonb" json:"parents"`
+	TechniqueName string                          `bun:"technique_name,notnull" json:"technique_name"`
 
 	Technique *TemtemTechnique `bun:"rel:belongs-to,join:technique_name=name" json:"technique"`
 }

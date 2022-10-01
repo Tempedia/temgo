@@ -279,14 +279,26 @@ class TypeSpider(scrapy.Spider):
                 'technique': technique,
             })
         # 遗传技能
-        for tr in response.css(
-                r'.mw-parser-output > h3:contains("By Breeding") + table.learnlist tbody tr:not(:last-child)'):
+        breeding = response.css(
+            r'.mw-parser-output > h3:contains("By Breeding")')
+        if not breeding:
+            breeding = response.css(
+                r'.mw-parser-output > h3:contains("By breeding")')
+        for tr in breeding.css(r':scope + table.learnlist tbody tr:not(:last-child)'):
             if not tr.css('td:nth-child(2)'):
                 continue
             stab = bool(tr.css(r'td:nth-child(2) > i'))
             technique = tr.css(r'td:nth-child(2) a::text').get('').strip()
-            parents = tr.css(
-                'td:first-child div.parents div.parent a::attr(title)').getall()
+            parents = []
+            for pdiv in tr.css(r'td:first-child div.parents div.parent'):
+                hint = pdiv.css('::text').get('').strip()
+                parent = pdiv.css('a::attr(title)').get()
+                parents.append({
+                    'name': parent,
+                    'hint': hint,
+                })
+            # parents = tr.css(
+            #     'td:first-child div.parents div.parent a::attr(title)').getall()
             techniques['breeding'].append({
                 'parents': parents,
                 'stab': stab,

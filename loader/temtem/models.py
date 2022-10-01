@@ -129,7 +129,7 @@ class TemtemCourseTechnique(models.Model):
 
 class TemtemBreedingTechnique(models.Model):
     temtem = models.CharField(max_length=64)
-    parents = ArrayField(models.CharField(max_length=64))
+    parents = models.JSONField()
     technique_name = models.CharField(max_length=64)
     stab = models.BooleanField(default=False)
 
