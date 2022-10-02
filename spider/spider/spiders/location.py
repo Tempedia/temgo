@@ -1,5 +1,6 @@
 #!/usr/env python3
 
+from os import sep
 import scrapy
 
 from .utils import parseStrList
@@ -59,14 +60,27 @@ class LocationSpider(scrapy.Spider):
                 if not tname:
                     continue
                 odds = t.css(r'tr:nth-child(4) td::text').get('').strip()
-                levels = t.css(
-                    r'tr:nth-child(5) td::text').get('').strip().split('-')
+                levels = t.css(r'tr:nth-child(5) td::text').get('').strip()
+                egg = False
+                fromm = 0
+                to = 0
+                if levels == 'Egg':
+                    egg = True
+                else:
+                    seps = levels.split('-')
+                    if len(seps) == 1:
+                        fromm = int(seps[0])
+                        to = fromm
+                    else:
+                        fromm = int(seps[0])
+                        to = int(seps[1])
                 temtems.append({
                     'name': tname,
                     'odds': odds,
                     'level': {
-                        'from': int(levels[0]),
-                        'to': int(levels[1] if len(levels) > 1 else levels[0]),
+                        'from': fromm,
+                        'to': to,
+                        'egg': egg,
                     }
                 })
             area = {

@@ -45,8 +45,6 @@ func FindTemtemsByTrait(c echo.Context) error {
 
 	name := ctx.Param(`name`)
 
-	// time.Sleep(time.Second * 3)
-
 	temtems, err := temtemdb.FindTemtemsByTrait(name)
 	if err != nil {
 		return err
