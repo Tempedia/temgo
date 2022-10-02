@@ -38,3 +38,18 @@ func FindTemtemTraits(query string, page, pageSize int) ([]*TemtemTrait, int, er
 	}
 	return traits, total, nil
 }
+
+/* 获取包含特性的所有temtem */
+func FindTemtemsByTrait(name string) ([]*Temtem, error) {
+	temtems := make([]*Temtem, 0)
+
+	q := db.PG().NewSelect().Model(&temtems).Order(`no ASC`)
+
+	q = q.Where(`? = ANY("traits")`, name)
+
+	if err := q.Scan(context.Background()); err != nil {
+		log.Errorf("DB Error: %v", err)
+		return nil, err
+	}
+	return temtems, nil
+}

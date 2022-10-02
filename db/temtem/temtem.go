@@ -12,7 +12,7 @@ import (
 	"gitlab.com/wiky.lyu/temgo/x"
 )
 
-func FindTemtems(query string, type_ []string, sort string, page, pageSize int) ([]*Temtem, int, error) {
+func FindTemtems(query string, type_ []string, trait, sort string, page, pageSize int) ([]*Temtem, int, error) {
 	temtems := make([]*Temtem, 0)
 
 	q := db.PG().NewSelect().Model(&temtems)
@@ -29,11 +29,10 @@ func FindTemtems(query string, type_ []string, sort string, page, pageSize int) 
 		q = q.Where(`"type" @> ?`, pgdialect.Array(type_))
 	}
 
-	total, err := q.Count(context.Background())
-	if err != nil {
-		log.Errorf("DB Error: %v", err)
-		return nil, 0, err
+	if trait != "" {
+		q = q.Where(`? = ANY("traits")`, trait)
 	}
+
 	sortField, sortOrder := x.ParseSortParam(sort)
 	if sortField != "" && sortOrder != "" {
 		switch sortField {
@@ -71,7 +70,8 @@ func FindTemtems(query string, type_ []string, sort string, page, pageSize int) 
 		q = q.Order(`no ASC`)
 	}
 
-	if err := q.Limit(pageSize).Offset((page - 1) * pageSize).Scan(context.Background()); err != nil {
+	total, err := q.Limit(pageSize).Offset((page - 1) * pageSize).ScanAndCount(context.Background())
+	if err != nil {
 		log.Errorf("DB Error: %v", err)
 		return nil, 0, err
 	}

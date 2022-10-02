@@ -39,3 +39,17 @@ func FindTemtemTraits(c echo.Context) error {
 	}
 	return ctx.List(traits, req.Page, req.PageSize, total)
 }
+
+func FindTemtemsByTrait(c echo.Context) error {
+	ctx := c.(*middleware.Context)
+
+	name := ctx.Param(`name`)
+
+	// time.Sleep(time.Second * 3)
+
+	temtems, err := temtemdb.FindTemtemsByTrait(name)
+	if err != nil {
+		return err
+	}
+	return ctx.Success(temtems)
+}
