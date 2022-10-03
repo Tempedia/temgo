@@ -67,12 +67,6 @@ type TemtemStats struct {
 	SPDEF TemtemStatsItem `json:"SPDEF" jsonb:"SPDEF"`
 }
 
-// type TemtemTechniques struct {
-// 	Course     []TemtemCourseTechnique     `json:"course" jsonb:"course"`
-// 	LevelingUp []TemtemLevelingUpTechnique `json:"leveling_up" jsonb:"leveling_up"`
-// 	Breeding   []TemtemBreedingTechnique   `json:"breeding" jsonb:"breeding"`
-// }
-
 type TemtemGallery struct {
 	Text   string `json:"text" jsonb:"text"`
 	FileID string `json:"fileid" jsonb:"fileid"`
@@ -186,4 +180,36 @@ type TemtemBreedingTechnique struct {
 	TechniqueName string                          `bun:"technique_name,notnull" json:"technique_name"`
 
 	Technique *TemtemTechnique `bun:"rel:belongs-to,join:technique_name=name" json:"technique"`
+}
+
+type TemtemLocation struct {
+	bun.BaseModel      `bun:"table:temtem_location"`
+	Name               string   `bun:"name,notnull,pk" json:"name"`
+	Description        string   `bun:"description,notnull,nullzero" json:"description"`
+	Island             string   `bun:"island,notnull,nullzero" json:"island"`
+	Image              string   `bun:"image,notnull,nullzero" json:"image"`
+	Comment            string   `bun:"comment,notnull,nullzero" json:"comment"`
+	ConnectedLocations []string `bun:"connected_locations,notnull,nullzero,array" json:"connected_locations"`
+}
+
+type TemtemLocationAreaTemtem struct {
+	Name string `json:"name" jsonb:"name"`
+	Odds []struct {
+		Odds string `json:"odds" jsonb:"odds"`
+		Desc string `json:"desc" jsonb:"desc"`
+	} `json:"odds" jsonb:"odds"`
+	Level struct {
+		From int  `json:"from" jsonb:"from"`
+		To   int  `json:"to" jsonb:"to"`
+		Egg  bool `json:"egg" jsonb:"egg"`
+	} `json:"level" jsonb:"level"`
+}
+
+type TemtemLocationArea struct {
+	bun.BaseModel `bun:"table:temtem_location_area"`
+	ID            int64                      `bun:"id,notnull,pk" json:"-"`
+	Name          string                     `bun:"name,notnull" json:"name"`
+	Location      string                     `bun:"location,notnull" json:"location"`
+	Image         string                     `bun:"image,notnull,nullzero" json:"image"`
+	Temtems       []TemtemLocationAreaTemtem `bun:"temtems,notnull,nullzero,type:jsonb" json:"temtems"`
 }

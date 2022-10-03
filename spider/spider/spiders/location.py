@@ -28,22 +28,29 @@ class LocationSpider(scrapy.Spider):
         if not name:
             return
         comment = response.css(r'.infobox + table')
-        desc = ''
+        descself = None
         if not comment:
-            desc = parseStrList(response.css(
-                r'.mw-parser-output > .infobox ~ p').getall())
+            descself = response.css(r'.mw-parser-output > .infobox')
         else:
-            desc = parseStrList(response.css(
-                r'.mw-parser-output > .infobox + table ~ p').getall())
+            descself = response.css(
+                r'.mw-parser-output > .infobox + table')
             comment = comment.css(r'td i').get()
+        x = descself
+        desc = []
+        while x:
+            x = x.css(r':scope + *')
+            if x.xpath('name()').get() in ('h3', 'h2', 'div'):
+                break
+            desc.append(x.get())
+
         connectedAreas = []
         for a in response.css(r'tr.infobox-row th:contains("Connected Areas") + td a'):
             connectedAreas.append(a.css('::attr(title)').get())
         island = response.css(
             r'tr.infobox-row th:contains("Island") + td a::attr(title)').get()
-        imgSrc = response.css(
+        iimgSrc = response.css(
             r'.infobox-table > tbody:nth-child(1) > tr:nth-child(3) > td:nth-child(1) > a:nth-child(1)::attr(href)').get('')
-        imgSrc = response.urljoin(imgSrc)
+        iimgSrc = response.urljoin(iimgSrc)
         imgText = response.css(
             r'.infobox-table > tbody:nth-child(1) > tr:nth-child(6) > td:nth-child(1) > i:nth-child(1)::text').get('')
 
@@ -106,10 +113,10 @@ class LocationSpider(scrapy.Spider):
 
         yield LocationItem(
             name=name,
-            desc=desc,
+            desc=''.join(desc),
             connectedAreas=connectedAreas,
             island=island,
-            image=TemtemImageItem(image_url={'url': imgSrc, 'text': imgText}),
+            image=TemtemImageItem(image_url={'url': iimgSrc, 'text': imgText}),
             comment=comment,
             areas=areas,
         )

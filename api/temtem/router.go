@@ -26,4 +26,8 @@ func Register(router *echo.Group) {
 
 	/* Technique */
 	router.GET("/temtem/:name/techniques", FindTemtemTechniquesByTemtem)
+
+	/* Location */
+	router.GET("/locations", FindTemtemLocations)
+	router.GET("/location/:name/areas", FindTemtemLocationAreasByLocation)
 }
