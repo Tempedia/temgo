@@ -135,3 +135,27 @@ class TemtemBreedingTechnique(models.Model):
 
     class Meta:
         db_table = "temtem_breeding_technique"
+
+
+class TemtemLocation(models.Model):
+    name = models.CharField(max_length=128, primary_key=True)
+    description = models.TextField()
+    island = models.CharField(
+        max_length=64, blank=True, null=False, default='')
+    image = models.CharField(max_length=1024)
+    comment = models.TextField()
+    connected_locations = ArrayField(models.CharField(max_length=128))
+
+    class Meta:
+        db_table = "temtem_location"
+
+
+class TemtemLocationArea(models.Model):
+    location = models.CharField(max_length=128)
+    name = models.CharField(max_length=256)
+    image = models.CharField(max_length=1024)
+    temtems = models.JSONField()
+
+    class Meta:
+        db_table = "temtem_location_area"
+        unique_together = ('location', 'name')

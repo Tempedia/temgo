@@ -4,7 +4,7 @@ from os import sep
 import scrapy
 
 from .utils import parseStrList
-
+from scrapy.utils.defer import maybe_deferred_to_future
 from ..items import LocationItem, TemtemImageItem
 
 
@@ -18,7 +18,8 @@ class LocationSpider(scrapy.Spider):
 
     def parse_temtem(self, response):
         for page in response.css(r'tr.infobox-row th:contains("Locations") + td a'):
-            if page.css('::text').get('') == 'Evolution':
+            name = page.css('::text').get('')
+            if name == 'Evolution' or name == 'Starter' or name == 'Breeding':
                 continue
             yield response.follow(page, self.parse_location)
 
@@ -26,7 +27,7 @@ class LocationSpider(scrapy.Spider):
         name = response.css(r'#firstHeading::text').get()
         if not name:
             return
-        comment = response.css(r'.infobox + table').get()
+        comment = response.css(r'.infobox + table')
         desc = ''
         if not comment:
             desc = parseStrList(response.css(
@@ -34,6 +35,7 @@ class LocationSpider(scrapy.Spider):
         else:
             desc = parseStrList(response.css(
                 r'.mw-parser-output > .infobox + table ~ p').getall())
+            comment = comment.css(r'td i').get()
         connectedAreas = []
         for a in response.css(r'tr.infobox-row th:contains("Connected Areas") + td a'):
             connectedAreas.append(a.css('::attr(title)').get())
@@ -59,7 +61,19 @@ class LocationSpider(scrapy.Spider):
                 tname = t.css(r'tr td.temtemName a::attr(title)').get('')
                 if not tname:
                     continue
-                odds = t.css(r'tr:nth-child(4) td::text').get('').strip()
+                odds = []
+                oddsabbr = t.css(r'tr:nth-child(4) td abbr')
+                if oddsabbr:
+                    for abbr in oddsabbr:
+                        odds.append({
+                            'odds': abbr.css('::text').get('').strip(),
+                            'desc': abbr.css('::attr(title)').get('').strip(),
+                        })
+                else:
+                    odds = [{
+                        'odds': t.css(r'tr:nth-child(4) td::text').get('').strip(),
+                        'desc': '',
+                    }]
                 levels = t.css(r'tr:nth-child(5) td::text').get('').strip()
                 egg = False
                 fromm = 0

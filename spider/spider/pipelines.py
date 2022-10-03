@@ -150,7 +150,7 @@ class TemtemImagePipeline2(FilesPipeline):
         m = {}
         for k, v in item.items():
             if isinstance(v, TemtemImageItem):
-                m[k] = []
+                m[k] = None
         for ok, x in results:
             if ok:
                 x['path'] = os.path.join(settings.FILES_STORE, x['path'])
@@ -160,7 +160,7 @@ class TemtemImagePipeline2(FilesPipeline):
                         if x['url'] == url['url']:
                             if 'text' in url:
                                 x['text'] = url['text']
-                            m[k].append(x)
+                            m[k] = x
                             break
         for k, v in m.items():
             item[k] = v

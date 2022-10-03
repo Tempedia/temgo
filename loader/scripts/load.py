@@ -4,8 +4,10 @@ import os
 import json
 from unicodedata import name
 from django.db import transaction
+import requests
+import hashlib
 
-from temtem.models import Temtem, TemtemBreedingTechnique, TemtemCourseTechnique, TemtemLevelingUpTechnique, TemtemTechnique, TemtemTrait, Type
+from temtem.models import Temtem, TemtemBreedingTechnique, TemtemCourseTechnique, TemtemLevelingUpTechnique, TemtemLocation, TemtemLocationArea, TemtemTechnique, TemtemTrait, Type
 import shutil
 from pathlib import Path
 from bs4 import BeautifulSoup
@@ -24,6 +26,23 @@ def copyfile(src, dst):
         return os.path.basename(src)
     shutil.copy2(src, dst)
     return os.path.basename(src)
+
+
+def downloadfile(url, folder):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content)
+    a = soup.select('div#file > a')[0]
+    imgurl = 'https://temtem.wiki.gg'+a['href']
+    filename = os.path.basename(imgurl)
+    hash = hashlib.md5()
+    hash.update(filename.encode())
+    filename = hash.hexdigest()
+    path = os.path.join(folder, filename)
+    if os.path.exists(path):
+        return filename
+    response = requests.get(imgurl)
+    open(path, "wb").write(response.content)
+    return filename
 
 
 def updateHTML(html):
@@ -277,6 +296,38 @@ def loadTemtemTechnique(path):
         technique.save()
 
 
+@transaction.atomic
+def loadLocation(path):
+    TemtemLocation.objects.all().delete()
+    TemtemLocationArea.objects.all().delete()
+    locations = json.load(open(path))
+    for l in locations:
+        comment = l['comment']
+        if not comment:
+            comment = l['image']['text'] if l['image'] else ''
+        desc = updateHTML(l['desc'])
+        if desc:
+            desc = desc.encode_contents().decode()
+        location = TemtemLocation(
+            name=l['name'],
+            description=desc,
+            connected_locations=l['connectedAreas'],
+            island=l['island'] or '',
+            comment=comment,
+            image=copyfile(l['image']['path'], filesfolder),
+        )
+        location.save()
+
+        for a in l['areas']:
+            area = TemtemLocationArea(
+                location=location.name,
+                name=a['title'],
+                image=downloadfile(a['image'], filesfolder),
+                temtems=a['temtems'],
+            )
+            area.save()
+
+
 def run(*args):
     if len(args) != 1:
         print('load <json data folder>')
@@ -287,3 +338,4 @@ def run(*args):
     loadTemtemTrait(os.path.join(folder, 'trait.json'))
     loadTemtemTechnique(os.path.join(folder, 'technique.json'))
     loadTemtem(os.path.join(folder, 'temtem.json'))
+    loadLocation(os.path.join(folder, 'location.json'))
