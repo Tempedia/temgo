@@ -55,7 +55,14 @@ func GetTemtem(c echo.Context) error {
 	if len(seps) > 1 {
 		name = seps[0]
 		subspecie = seps[1]
+	} else {
+		seps = strings.Split(name, "(")
+		if len(seps) > 1 {
+			name = strings.TrimSpace(seps[0])
+			subspecie = strings.Trim(seps[1], ")")
+		}
 	}
+
 	temtem, err := temtemdb.GetTemtemByName(name)
 	if err != nil {
 		return err
