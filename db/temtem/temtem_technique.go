@@ -62,3 +62,39 @@ func FindTemtemTechniques(query string, types []string, class string, page, page
 	}
 	return techniques, total, nil
 }
+
+func FindTemtemsByLevelingUpTechnique(techname string) ([]*Temtem, error) {
+	temtems := make([]*Temtem, 0)
+
+	if err := db.PG().NewSelect().Model(&temtems).
+		Where(`EXISTS (SELECT 1 FROM "temtem_leveling_up_technique" AS "t" WHERE "temtem"."name"="t"."temtem" AND "t"."technique_name"=?)`, techname).
+		Scan(context.Background()); err != nil {
+		log.Errorf("DB Error: %v", err)
+		return nil, err
+	}
+	return temtems, nil
+}
+
+func FindTemtemsByCourseTechnique(techname string) ([]*Temtem, error) {
+	temtems := make([]*Temtem, 0)
+
+	if err := db.PG().NewSelect().Model(&temtems).
+		Where(`EXISTS (SELECT 1 FROM "temtem_course_technique" AS "t" WHERE "temtem"."name"="t"."temtem" AND "t"."technique_name"=?)`, techname).
+		Scan(context.Background()); err != nil {
+		log.Errorf("DB Error: %v", err)
+		return nil, err
+	}
+	return temtems, nil
+}
+
+func FindTemtemsByBreedingTechnique(techname string) ([]*Temtem, error) {
+	temtems := make([]*Temtem, 0)
+
+	if err := db.PG().NewSelect().Model(&temtems).
+		Where(`EXISTS (SELECT 1 FROM "temtem_breeding_technique" AS "t" WHERE "temtem"."name"="t"."temtem" AND "t"."technique_name"=?)`, techname).
+		Scan(context.Background()); err != nil {
+		log.Errorf("DB Error: %v", err)
+		return nil, err
+	}
+	return temtems, nil
+}

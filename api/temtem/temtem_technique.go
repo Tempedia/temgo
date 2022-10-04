@@ -60,3 +60,27 @@ func FindTemtemTechniques(c echo.Context) error {
 
 	return ctx.List(techniques, req.Page, req.PageSize, total)
 }
+
+func FindTemtemsByTechnique(c echo.Context) error {
+	ctx := c.(*middleware.Context)
+	name := ctx.Param(`name`)
+
+	levelingUp, err := temtemdb.FindTemtemsByLevelingUpTechnique(name)
+	if err != nil {
+		return err
+	}
+	course, err := temtemdb.FindTemtemCourseTechniques(name)
+	if err != nil {
+		return err
+	}
+	breeding, err := temtemdb.FindTemtemBreedingTechniques(name)
+	if err != nil {
+		return err
+	}
+
+	return ctx.Success(map[string]interface{}{
+		"leveling_up": levelingUp,
+		"course":      course,
+		"breeding":    breeding,
+	})
+}
