@@ -40,3 +40,21 @@ func FindTemtemLocationAreasByLocation(c echo.Context) error {
 	}
 	return ctx.Success(areas)
 }
+
+/* 查询temtem所在的区域 */
+func FindTemtemLocationsByTemtem(c echo.Context) error {
+	ctx := c.(*middleware.Context)
+	name, _ := parseTemtemName(ctx.Param(`name`))
+
+	temtem, err := temtemdb.GetTemtemByName(name)
+	if err != nil {
+		return err
+	} else if temtem == nil {
+		return ctx.NotFound()
+	}
+	locations, err := temtemdb.FindTemtemLocationsByTemtem(temtem.Name)
+	if err != nil {
+		return err
+	}
+	return ctx.Success(locations)
+}

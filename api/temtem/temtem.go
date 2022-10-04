@@ -46,10 +46,7 @@ func FindTemtemsEvolvesFrom(c echo.Context) error {
 	return ctx.Success(temtems)
 }
 
-func GetTemtem(c echo.Context) error {
-	ctx := c.(*middleware.Context)
-	name := ctx.Param(`name`)
-
+func parseTemtemName(name string) (string, string) {
 	subspecie := ""
 	seps := strings.Split(name, "#")
 	if len(seps) > 1 {
@@ -62,6 +59,13 @@ func GetTemtem(c echo.Context) error {
 			subspecie = strings.Trim(seps[1], ")")
 		}
 	}
+	return name, subspecie
+}
+
+func GetTemtem(c echo.Context) error {
+	ctx := c.(*middleware.Context)
+
+	name, subspecie := parseTemtemName(ctx.Param(`name`))
 
 	temtem, err := temtemdb.GetTemtemByName(name)
 	if err != nil {

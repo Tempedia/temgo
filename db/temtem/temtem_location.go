@@ -32,3 +32,16 @@ func FindTemtemLocationAreasByLocation(location string) ([]*TemtemLocationArea, 
 	}
 	return areas, nil
 }
+
+/* 获取temtem所在区域 */
+func FindTemtemLocationsByTemtem(temname string) ([]*TemtemLocation, error) {
+	locations := make([]*TemtemLocation, 0)
+
+	if err := db.PG().NewSelect().Model(&locations).
+		Where(`"name" IN (SELECT "location" FROM "temtem_location_area",jsonb_array_elements("temtems") j WHERE j->>'name' = ? or j->>'name' ILIKE ?)`, temname, temname+" (%").
+		Scan(context.Background()); err != nil {
+		log.Errorf("DB Error: %v", err)
+		return nil, err
+	}
+	return locations, nil
+}
