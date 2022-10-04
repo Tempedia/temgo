@@ -70,8 +70,15 @@ func GetTemtem(c echo.Context) error {
 	if temtem != nil && subspecie != "" {
 		for _, sub := range temtem.Subspecies {
 			if sub.Type == subspecie {
+				temtem.Subspecie = &sub
 				temtem.Icon = sub.Icon
 				temtem.LumaIcon = sub.LumaIcon
+				temtem.Name = temtem.Name + "(" + sub.Type + ")"
+				type_ := sub.Type
+				if !strings.Contains(type_, "type") {
+					type_ = type_ + " type"
+				}
+				temtem.Type = append(temtem.Type, type_)
 				break
 			}
 		}

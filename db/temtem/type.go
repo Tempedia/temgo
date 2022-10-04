@@ -108,6 +108,8 @@ type Temtem struct {
 
 	Gallery []TemtemGallery `bun:"gallery,notnull,nullzero,type:jsonb" json:"gallery"`
 	Renders []TemtemGallery `bun:"renders,notnull,nullzero,type:jsonb" json:"renders"`
+
+	Subspecie *TemtemSubspecie `bun:"-" json:"subspecie,omitempty"`
 }
 
 type TemtemTrait struct {
