@@ -147,25 +147,27 @@ type TemtemTechnique struct {
 type TemtemCourseTechnique struct {
 	bun.BaseModel `bun:"table:temtem_course_technique"`
 	ID            int64  `bun:"id,notnull,pk" json:"-"`
-	Temtem        string `bun:"temtem,notnull" json:"temtem"`
+	Temtem        string `bun:"temtem,notnull" json:"-"`
 	Stab          bool   `bun:"stab,notnull,nullzero" json:"stab"`
 	Course        string `bun:"course,notnull" json:"course"`
 	TechniqueName string `bun:"technique_name,notnull" json:"technique_name"`
 
-	Technique *TemtemTechnique `bun:"rel:belongs-to,join:technique_name=name" json:"technique"`
+	Technique    *TemtemTechnique `bun:"rel:belongs-to,join:technique_name=name" json:"technique"`
+	TemtemObject *Temtem          `bun:"rel:belongs-to,join:temtem=name" json:"temtem"`
 }
 
 type TemtemLevelingUpTechnique struct {
 	bun.BaseModel `bun:"table:temtem_leveling_up_technique"`
 	ID            int64  `bun:"id,notnull,pk" json:"-"`
-	Temtem        string `bun:"temtem,notnull" json:"temtem"`
+	Temtem        string `bun:"temtem,notnull" json:"-"`
 	Stab          bool   `bun:"stab,notnull,nullzero" json:"stab"`
 	Level         int    `bun:"level,notnull" json:"level"`
 	TechniqueName string `bun:"technique_name,notnull" json:"technique_name"`
 
 	Group string `bun:"group,notnull,nullzero" json:"group"`
 
-	Technique *TemtemTechnique `bun:"rel:belongs-to,join:technique_name=name" json:"technique"`
+	Technique    *TemtemTechnique `bun:"rel:belongs-to,join:technique_name=name" json:"technique"`
+	TemtemObject *Temtem          `bun:"rel:belongs-to,join:temtem=name" json:"temtem"`
 }
 
 type TemtemBreedingTechniqueParent struct {
@@ -176,12 +178,13 @@ type TemtemBreedingTechniqueParent struct {
 type TemtemBreedingTechnique struct {
 	bun.BaseModel `bun:"table:temtem_breeding_technique"`
 	ID            int64                           `bun:"id,notnull,pk" json:"-"`
-	Temtem        string                          `bun:"temtem,notnull" json:"temtem"`
+	Temtem        string                          `bun:"temtem,notnull" json:"-"`
 	Stab          bool                            `bun:"stab,notnull,nullzero" json:"stab"`
 	Parents       []TemtemBreedingTechniqueParent `bun:"parents,notnull,type:jsonb" json:"parents"`
 	TechniqueName string                          `bun:"technique_name,notnull" json:"technique_name"`
 
-	Technique *TemtemTechnique `bun:"rel:belongs-to,join:technique_name=name" json:"technique"`
+	Technique    *TemtemTechnique `bun:"rel:belongs-to,join:technique_name=name" json:"technique"`
+	TemtemObject *Temtem          `bun:"rel:belongs-to,join:temtem=name" json:"temtem"`
 }
 
 type TemtemLocation struct {

@@ -63,11 +63,11 @@ func FindTemtemTechniques(query string, types []string, class string, page, page
 	return techniques, total, nil
 }
 
-func FindTemtemsByLevelingUpTechnique(techname string) ([]*Temtem, error) {
-	temtems := make([]*Temtem, 0)
+func FindTemtemsByLevelingUpTechnique(techname string) ([]*TemtemLevelingUpTechnique, error) {
+	temtems := make([]*TemtemLevelingUpTechnique, 0)
 
-	if err := db.PG().NewSelect().Model(&temtems).
-		Where(`EXISTS (SELECT 1 FROM "temtem_leveling_up_technique" AS "t" WHERE "temtem"."name"="t"."temtem" AND "t"."technique_name"=?)`, techname).
+	if err := db.PG().NewSelect().Model(&temtems).Relation(`TemtemObject`).Relation(`Technique`).
+		Where(`"temtem_leveling_up_technique"."technique_name"=?`, techname).Order(`temtem_leveling_up_technique.level`).
 		Scan(context.Background()); err != nil {
 		log.Errorf("DB Error: %v", err)
 		return nil, err
@@ -75,11 +75,11 @@ func FindTemtemsByLevelingUpTechnique(techname string) ([]*Temtem, error) {
 	return temtems, nil
 }
 
-func FindTemtemsByCourseTechnique(techname string) ([]*Temtem, error) {
-	temtems := make([]*Temtem, 0)
+func FindTemtemsByCourseTechnique(techname string) ([]*TemtemCourseTechnique, error) {
+	temtems := make([]*TemtemCourseTechnique, 0)
 
-	if err := db.PG().NewSelect().Model(&temtems).
-		Where(`EXISTS (SELECT 1 FROM "temtem_course_technique" AS "t" WHERE "temtem"."name"="t"."temtem" AND "t"."technique_name"=?)`, techname).
+	if err := db.PG().NewSelect().Model(&temtems).Relation(`TemtemObject`).Relation(`Technique`).
+		Where(`"temtem_course_technique"."technique_name"=?`, techname).
 		Scan(context.Background()); err != nil {
 		log.Errorf("DB Error: %v", err)
 		return nil, err
@@ -87,11 +87,11 @@ func FindTemtemsByCourseTechnique(techname string) ([]*Temtem, error) {
 	return temtems, nil
 }
 
-func FindTemtemsByBreedingTechnique(techname string) ([]*Temtem, error) {
-	temtems := make([]*Temtem, 0)
+func FindTemtemsByBreedingTechnique(techname string) ([]*TemtemBreedingTechnique, error) {
+	temtems := make([]*TemtemBreedingTechnique, 0)
 
-	if err := db.PG().NewSelect().Model(&temtems).
-		Where(`EXISTS (SELECT 1 FROM "temtem_breeding_technique" AS "t" WHERE "temtem"."name"="t"."temtem" AND "t"."technique_name"=?)`, techname).
+	if err := db.PG().NewSelect().Model(&temtems).Relation(`TemtemObject`).Relation(`Technique`).
+		Where(`"temtem_breeding_technique"."technique_name"=?`, techname).
 		Scan(context.Background()); err != nil {
 		log.Errorf("DB Error: %v", err)
 		return nil, err

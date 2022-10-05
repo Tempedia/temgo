@@ -69,11 +69,11 @@ func FindTemtemsByTechnique(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	course, err := temtemdb.FindTemtemCourseTechniques(name)
+	course, err := temtemdb.FindTemtemsByCourseTechnique(name)
 	if err != nil {
 		return err
 	}
-	breeding, err := temtemdb.FindTemtemBreedingTechniques(name)
+	breeding, err := temtemdb.FindTemtemsByBreedingTechnique(name)
 	if err != nil {
 		return err
 	}
