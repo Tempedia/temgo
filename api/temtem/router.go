@@ -33,4 +33,7 @@ func Register(router *echo.Group) {
 	/* Location */
 	router.GET("/locations", FindTemtemLocations)
 	router.GET("/location/:name/areas", FindTemtemLocationAreasByLocation)
+
+	/* Condition */
+	router.GET("/status/conditions", FindTemtemStatusConditions)
 }

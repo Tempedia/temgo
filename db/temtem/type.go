@@ -218,3 +218,15 @@ type TemtemLocationArea struct {
 	Image         string                     `bun:"image,notnull,nullzero" json:"image"`
 	Temtems       []TemtemLocationAreaTemtem `bun:"temtems,notnull,nullzero,type:jsonb" json:"temtems"`
 }
+
+type TemtemStatusCondition struct {
+	bun.BaseModel `bun:"table:temtem_status_condition"`
+	// ID            int64  `bun:"id,notnull,pk" json:"-"`
+	Name        string `bun:"name,notnull,pk" json:"name"`
+	Icon        string `bun:"icon,notnull,nullzero" json:"icon"`
+	Description string `bun:"description,notnull,nullzero" json:"description"`
+	Group       string `bun:"group,notnull,nullzero" json:"group"`
+
+	Techniques []string `bun:"techniques,notnull,nullzero,array" json:"techniques"`
+	Traits     []string `bun:"traits,notnull,nullzero,array" json:"traits"`
+}

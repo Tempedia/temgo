@@ -7,7 +7,7 @@ from django.db import transaction
 import requests
 import hashlib
 
-from temtem.models import Temtem, TemtemBreedingTechnique, TemtemCourseTechnique, TemtemLevelingUpTechnique, TemtemLocation, TemtemLocationArea, TemtemTechnique, TemtemTrait, Type
+from temtem.models import Temtem, TemtemBreedingTechnique, TemtemCourseTechnique, TemtemLevelingUpTechnique, TemtemLocation, TemtemLocationArea, TemtemStatusCondition, TemtemTechnique, TemtemTrait, Type
 import shutil
 from pathlib import Path
 from bs4 import BeautifulSoup
@@ -328,6 +328,36 @@ def loadLocation(path):
             area.save()
 
 
+@transaction.atomic
+def loadCondition(path):
+    TemtemStatusCondition.objects.all().delete()
+    conditions = json.load(open(path))
+    for c in conditions:
+        techniques = []
+        traits = []
+        for t in c['techniques']:
+            if '(' in t:
+                t = t.split('(')[0].strip()
+            o = TemtemTechnique.objects.filter(name=t).first()
+            if o:
+                techniques.append(t)
+        for t in c['traits']:
+            if '(' in t:
+                t = t.split('(')[0].strip()
+            o = TemtemTrait.objects.filter(name=t).first()
+            if o:
+                traits.append(t)
+        condition = TemtemStatusCondition(
+            name=c['name'],
+            icon=copyfile(c['icon']['path'], filesfolder),
+            group=c['group'],
+            description=updateHTML(c['desc']).p.encode_contents().decode(),
+            techniques=techniques,
+            traits=traits,
+        )
+        condition.save()
+
+
 def run(*args):
     if len(args) != 1:
         print('load <json data folder>')
@@ -339,3 +369,4 @@ def run(*args):
     loadTemtemTechnique(os.path.join(folder, 'technique.json'))
     loadTemtem(os.path.join(folder, 'temtem.json'))
     loadLocation(os.path.join(folder, 'location.json'))
+    loadCondition(os.path.join(folder, 'condition.json'))

@@ -1,4 +1,4 @@
-CREATE TABLE "temgo" WITH ENCODING="UTF-8";
+CREATE DATABASE "temgo" WITH ENCODING="UTF-8";
 
 \c "temgo";
 CREATE EXTENSION "uuid-ossp";

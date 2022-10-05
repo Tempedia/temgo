@@ -44,7 +44,7 @@ class Temtem(models.Model):
     gallery = models.JSONField()
     renders = models.JSONField()
 
-    subspecies = models.JSONField(default=[])
+    subspecies = models.JSONField(default=list)
 
     class Meta:
         db_table = "temtem"
@@ -159,3 +159,15 @@ class TemtemLocationArea(models.Model):
     class Meta:
         db_table = "temtem_location_area"
         unique_together = ('location', 'name')
+
+
+class TemtemStatusCondition(models.Model):
+    name = models.CharField(max_length=64, primary_key=True)
+    icon = models.CharField(max_length=1024)
+    description = models.TextField()
+    group = models.CharField(max_length=64)
+    techniques = ArrayField(models.CharField(max_length=64), default=list)
+    traits = ArrayField(models.CharField(max_length=64), default=list)
+
+    class Meta:
+        db_table = "temtem_status_condition"

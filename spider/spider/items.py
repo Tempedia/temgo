@@ -116,3 +116,12 @@ class TechniqueCourseItem(scrapy.Item):
     name = scrapy.Field()
     course = scrapy.Field()
     source = scrapy.Field()
+
+
+class StatusConditionItem(scrapy.Item):
+    name = scrapy.Field()
+    icon = scrapy.Field()
+    desc = scrapy.Field()
+    group = scrapy.Field()
+    techniques = scrapy.Field()
+    traits = scrapy.Field()

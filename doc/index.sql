@@ -39,3 +39,8 @@ CREATE INDEX ON "temtem_breeding_technique"("technique_name");
 CREATE INDEX ON "temtem_location" USING GIN("name" gin_trgm_ops);
 CREATE INDEX ON "temtem_location_area"("location");
 CREATE INDEX ON "temtem_location_area" USING GIN("temtems");
+
+CREATE INDEX ON "temtem_status_condition" USING GIN("name" gin_trgm_ops);
+CREATE INDEX ON "temtem_status_condition" USING GIN("techniques");
+CREATE INDEX ON "temtem_status_condition" USING GIN("traits");
+CREATE INDEX ON "temtem_status_condition"("group");
