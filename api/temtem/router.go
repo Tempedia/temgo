@@ -38,4 +38,7 @@ func Register(router *echo.Group) {
 	router.GET("/status/conditions", FindTemtemStatusConditions)
 	router.GET("/status/condition/:name/techniques", FindTemtemStatusConditionTechniques)
 	router.GET("/status/condition/:name/traits", FindTemtemStatusConditionTraits)
+
+	/* Search */
+	router.GET("/search", Search)
 }

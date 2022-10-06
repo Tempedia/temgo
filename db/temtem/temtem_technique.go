@@ -45,6 +45,10 @@ func FindTemtemTechniques(query string, types []string, class string, page, page
 	techniques := make([]*TemtemTechnique, 0)
 	q := db.PG().NewSelect().Model(&techniques).Order(`name`)
 
+	if query != "" {
+		q = q.Where(`"name" ILIKE ?`, "%"+query+"%")
+	}
+
 	if len(types) >= 1 {
 		q = q.Where(`"type"=?`, types[0])
 	}
