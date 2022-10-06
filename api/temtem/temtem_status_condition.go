@@ -30,3 +30,25 @@ func FindTemtemStatusConditions(c echo.Context) error {
 	}
 	return ctx.List(conditions, req.Page, req.PageSize, total)
 }
+
+func FindTemtemStatusConditionTechniques(c echo.Context) error {
+	ctx := c.(*middleware.Context)
+	name := ctx.Param(`name`)
+
+	techniques, err := temtemdb.FindTemtemTechniquesByStatusCondition(name)
+	if err != nil {
+		return err
+	}
+	return ctx.Success(techniques)
+}
+
+func FindTemtemStatusConditionTraits(c echo.Context) error {
+	ctx := c.(*middleware.Context)
+	name := ctx.Param(`name`)
+
+	traits, err := temtemdb.FindTemtemTraitsByStatusCondition(name)
+	if err != nil {
+		return err
+	}
+	return ctx.Success(traits)
+}

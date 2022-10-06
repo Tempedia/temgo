@@ -26,3 +26,27 @@ func FindTemtemStatusConditions(query, group string, page, pageSize int) ([]*Tem
 	}
 	return conditions, total, nil
 }
+
+func FindTemtemTechniquesByStatusCondition(condition string) ([]*TemtemTechnique, error) {
+	techniques := make([]*TemtemTechnique, 0)
+
+	if err := db.PG().NewSelect().Model(&techniques).
+		Where(`"name" IN (SELECT UNNEST("techniques") FROM "temtem_status_condition" WHERE "name"=?)`, condition).
+		Scan(context.Background()); err != nil {
+		log.Errorf("DB Error: %v", err)
+		return nil, err
+	}
+	return techniques, nil
+}
+
+func FindTemtemTraitsByStatusCondition(condition string) ([]*TemtemTrait, error) {
+	traits := make([]*TemtemTrait, 0)
+
+	if err := db.PG().NewSelect().Model(&traits).
+		Where(`"name" IN (SELECT UNNEST("traits") FROM "temtem_status_condition" WHERE "name"=?)`, condition).
+		Scan(context.Background()); err != nil {
+		log.Errorf("DB Error: %v", err)
+		return nil, err
+	}
+	return traits, nil
+}
