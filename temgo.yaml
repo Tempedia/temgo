@@ -10,3 +10,8 @@ db:
 
 files:
   path: "./loader/scripts/files"
+
+google:
+  play:
+    packageName: "xyz.wikylyu.tempedia"
+    jsonFile: "./k.json"

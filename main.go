@@ -19,6 +19,7 @@ import (
 	"gitlab.com/wiky.lyu/temgo/config"
 	"gitlab.com/wiky.lyu/temgo/db"
 	"gitlab.com/wiky.lyu/temgo/service/files"
+	"gitlab.com/wiky.lyu/temgo/service/google"
 )
 
 const (
@@ -33,6 +34,7 @@ func init() {
 	initLog()
 	initDatabase()
 	initFiles()
+	initGoogle()
 }
 
 func initLog() {
@@ -43,6 +45,21 @@ func initLog() {
 			return fmt.Sprintf("%s()", f.Function), fmt.Sprintf("%s:%d", filename, f.Line)
 		},
 	})
+}
+
+func initGoogle() {
+	cfg := struct {
+		Play struct {
+			PackageName string `json:"packageName" yaml:"packageName"`
+			JSONFile    string `json:"jsonFile" yaml:"jsonFile"`
+		} `json:"play" yaml:"play"`
+	}{}
+	if err := config.Unmarshal("google", &cfg); err != nil {
+		panic(err)
+	}
+	if err := google.Init(cfg.Play.PackageName, cfg.Play.JSONFile); err != nil {
+		panic(err)
+	}
 }
 
 // func initGraylog(instance string) {

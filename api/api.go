@@ -4,6 +4,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"gitlab.com/wiky.lyu/temgo/api/files"
+	"gitlab.com/wiky.lyu/temgo/api/google"
 	"gitlab.com/wiky.lyu/temgo/api/middleware"
 	"gitlab.com/wiky.lyu/temgo/api/staff"
 	"gitlab.com/wiky.lyu/temgo/api/sys"
@@ -25,4 +26,5 @@ func Register(e *echo.Echo) {
 	staff.Register(router.Group("/staff"))
 	temtem.Register(router.Group("/temtem"))
 	files.Register(router.Group("/files"))
+	google.Register(router.Group("/google"))
 }
