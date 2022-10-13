@@ -1,0 +1,29 @@
+- hosts: localhost
+  tasks:
+    - name: build temgo
+      command: "{{item}}"
+      with_items:
+        - git checkout master
+        - make
+      args:
+        chdir: "{{playbook_dir}}/../.."
+- hosts: tempedia.wikylyu.xyz
+  user: wiky
+  tasks:
+    - name: deploy temgo
+      copy:
+        src: "{{playbook_dir}}/../../bin/temgo"
+        dest: /home/wiky/run/temgo/
+        mode: a+x
+        owner: wiky
+        backup: true
+- hosts: tempedia.wikylyu.xyz
+  user: wiky
+  become: true
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: restart temgo-9999
+      command: supervisorctl restart temgo-9999
+    - name: restart temgo-9998
+      command: supervisorctl restart temgo-9998

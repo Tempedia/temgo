@@ -3,6 +3,7 @@ module gitlab.com/wiky.lyu/temgo
 go 1.18
 
 require (
+	github.com/awa/go-iap v1.3.19
 	github.com/go-playground/validator/v10 v10.11.0
 	github.com/gorilla/sessions v1.2.1
 	github.com/hashicorp/consul/api v1.14.0
@@ -19,7 +20,6 @@ require (
 require (
 	cloud.google.com/go/compute v1.6.1 // indirect
 	github.com/armon/go-metrics v0.3.10 // indirect
-	github.com/awa/go-iap v1.3.19 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
