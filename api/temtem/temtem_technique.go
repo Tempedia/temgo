@@ -84,3 +84,25 @@ func FindTemtemsByTechnique(c echo.Context) error {
 		"breeding":    breeding,
 	})
 }
+
+type FindTemtemCourseItemsRequest struct {
+	Query    string `json:"query" form:"query" query:"query"`
+	Page     int    `json:"page" form:"page" query:"page"`
+	PageSize int    `json:"pageSize" form:"pageSize" query:"pageSize"`
+}
+
+/* 获取技能教程 */
+func FindTemtemCourseItems(c echo.Context) error {
+	ctx := c.(*middleware.Context)
+	req := FindTemtemCourseItemsRequest{}
+	if err := ctx.Bind(&req); err != nil {
+		return ctx.BadRequest()
+	}
+	req.Page, req.PageSize = x.Pagination(req.Page, req.PageSize)
+
+	items, total, err := temtemdb.FindTemtemCourseItems(req.Query, req.Page, req.PageSize)
+	if err != nil {
+		return err
+	}
+	return ctx.List(items, req.Page, req.PageSize, total)
+}

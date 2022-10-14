@@ -230,3 +230,12 @@ type TemtemStatusCondition struct {
 	Techniques []string `bun:"techniques,notnull,nullzero,array" json:"techniques"`
 	Traits     []string `bun:"traits,notnull,nullzero,array" json:"traits"`
 }
+
+type TemtemCourseItem struct {
+	bun.BaseModel `bun:"table:temtem_course_item"`
+	NO            string `bun:"no,notnull,pk" json:"no"`
+	TechniqueName string `bun:"technique,notnull,nullzero" json:"-"`
+	Source        string `bun:"source,notnull,nullzero" json:"source"`
+
+	Technique *TemtemTechnique `bun:"rel:belongs-to,join:technique=name" json:"technique"`
+}

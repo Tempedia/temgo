@@ -44,3 +44,6 @@ CREATE INDEX ON "temtem_status_condition" USING GIN("name" gin_trgm_ops);
 CREATE INDEX ON "temtem_status_condition" USING GIN("techniques");
 CREATE INDEX ON "temtem_status_condition" USING GIN("traits");
 CREATE INDEX ON "temtem_status_condition"("group");
+
+CREATE INDEX ON "temtem_course_item" USING GIN("no" gin_trgm_ops);
+CREATE INDEX ON "temtem_course_item" USING GIN("technique" gin_trgm_ops);

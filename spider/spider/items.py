@@ -113,8 +113,8 @@ class LocationItem(scrapy.Item):
 
 
 class TechniqueCourseItem(scrapy.Item):
-    name = scrapy.Field()
-    course = scrapy.Field()
+    no = scrapy.Field()
+    technique = scrapy.Field()
     source = scrapy.Field()
 
 

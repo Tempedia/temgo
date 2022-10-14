@@ -17,12 +17,11 @@ class TechniqueCourseSpider(scrapy.Spider):
             if not t:
                 continue
             names = t.split(':')
-            name = names[0].strip()
-            course = names[1].strip()
-            source = parseStrList(tr.css(r'td:nth-child(2) *::text').getall())
-
+            no = names[0].strip()
+            technique = names[1].strip()
+            source = tr.css(r'td:nth-child(2)').get()
             yield TechniqueCourseItem(
-                name=name,
-                course=course,
+                no=no,
+                technique=technique,
                 source=source,
             )

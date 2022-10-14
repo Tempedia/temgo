@@ -7,7 +7,7 @@ from django.db import transaction
 import requests
 import hashlib
 
-from temtem.models import Temtem, TemtemBreedingTechnique, TemtemCourseTechnique, TemtemLevelingUpTechnique, TemtemLocation, TemtemLocationArea, TemtemStatusCondition, TemtemTechnique, TemtemTrait, Type
+from temtem.models import Temtem, TemtemBreedingTechnique, TemtemCourseItem, TemtemCourseTechnique, TemtemLevelingUpTechnique, TemtemLocation, TemtemLocationArea, TemtemStatusCondition, TemtemTechnique, TemtemTrait, Type
 import shutil
 from pathlib import Path
 from bs4 import BeautifulSoup
@@ -358,6 +358,26 @@ def loadCondition(path):
         condition.save()
 
 
+@transaction.atomic
+def loadCourseItem(path):
+    TemtemCourseItem.objects.all().delete()
+    courses = json.load(open(path))
+    for c in courses:
+        no = c['no']
+        technique = c['technique']
+        source = updateHTML(c['source']).td.encode_contents().decode()
+        t = TemtemTechnique.objects.filter(name=technique).first()
+        if not t:
+            print('technique %s not found' % (technique,))
+            continue
+        item = TemtemCourseItem(
+            no=no,
+            technique=technique,
+            source=source,
+        )
+        item.save()
+
+
 def run(*args):
     if len(args) != 1:
         print('load <json data folder>')
@@ -368,5 +388,6 @@ def run(*args):
     loadTemtemTrait(os.path.join(folder, 'trait.json'))
     loadTemtemTechnique(os.path.join(folder, 'technique.json'))
     loadTemtem(os.path.join(folder, 'temtem.json'))
-    loadLocation(os.path.join(folder, 'location.json'))
+    # loadLocation(os.path.join(folder, 'location.json'))
     loadCondition(os.path.join(folder, 'condition.json'))
+    loadCourseItem(os.path.join(folder, 'course.json'))

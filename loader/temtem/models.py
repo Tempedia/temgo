@@ -171,3 +171,12 @@ class TemtemStatusCondition(models.Model):
 
     class Meta:
         db_table = "temtem_status_condition"
+
+
+class TemtemCourseItem(models.Model):
+    no = models.CharField(max_length=64, primary_key=True)
+    technique = models.CharField(max_length=64)
+    source = models.TextField()
+
+    class Meta:
+        db_table = "temtem_course_item"

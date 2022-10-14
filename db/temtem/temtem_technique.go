@@ -102,3 +102,20 @@ func FindTemtemsByBreedingTechnique(techname string) ([]*TemtemBreedingTechnique
 	}
 	return temtems, nil
 }
+
+func FindTemtemCourseItems(query string, page, pageSize int) ([]*TemtemCourseItem, int, error) {
+	items := make([]*TemtemCourseItem, 0)
+	q := db.PG().NewSelect().Model(&items).Relation(`Technique`).Order(`temtem_course_item.no`)
+
+	if query != "" {
+		qry := "%" + query + "%"
+		q = q.Where(`"temtem_course_item"."no" ILIKE ? OR "temtem_course_item"."technique" ILIKE ?`, qry, qry)
+	}
+
+	total, err := q.Limit(pageSize).Offset((page - 1) * pageSize).ScanAndCount(context.Background())
+	if err != nil {
+		log.Errorf("DB Error: %v", err)
+		return nil, 0, err
+	}
+	return items, total, nil
+}
