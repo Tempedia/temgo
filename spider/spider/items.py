@@ -137,3 +137,4 @@ class ItemItem(scrapy.Item):
     category = scrapy.Field()
     subcategory = scrapy.Field()
     quest = scrapy.Field()
+    extra = scrapy.Field()
