@@ -125,3 +125,15 @@ class StatusConditionItem(scrapy.Item):
     group = scrapy.Field()
     techniques = scrapy.Field()
     traits = scrapy.Field()
+
+
+class ItemItem(scrapy.Item):
+    icon = scrapy.Field()
+    name = scrapy.Field()
+    description = scrapy.Field()
+    tradable = scrapy.Field()
+    buyPrice = scrapy.Field()
+    sellPrice = scrapy.Field()
+    category = scrapy.Field()
+    subcategory = scrapy.Field()
+    quest = scrapy.Field()
