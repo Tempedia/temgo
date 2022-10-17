@@ -34,7 +34,7 @@ func init() {
 	initLog()
 	initDatabase()
 	initFiles()
-	initGoogle()
+	// initGoogle()
 }
 
 func initLog() {

@@ -239,3 +239,34 @@ type TemtemCourseItem struct {
 
 	Technique *TemtemTechnique `bun:"rel:belongs-to,join:technique=name" json:"technique"`
 }
+
+type TemtemItemCategory struct {
+	bun.BaseModel `bun:"table:temtem_item_category"`
+	Name          string `bun:"name,notnull,pk" json:"name"`
+	ParentName    string `bun:"parent,notnull,nullzero" json:"-"`
+	Sort          int    `bun:"sort,notnull,nullzero" json:"-"`
+
+	Parent *TemtemItemCategory `bun:"rel:belongs-to,join:parent=name" json:"parent,omitempty"`
+}
+
+type TemtemItemExtra struct {
+	Source       string `json:"Source,omitempty" jsonb:"Source"`
+	Location     string `json:"Location,omitempty" jsonb:"Location"`
+	CaptureBonus string `json:"Capture Bonus,omitempty" jsonb:"Capture Bonus"`
+	Quest        string `json:"Quest,omitempty" jsonb:"Quest"`
+}
+
+type TemtemItem struct {
+	bun.BaseModel `bun:"table:temtem_item"`
+	Name          string          `bun:"name,notnull,pk" json:"name"`
+	Icon          string          `bun:"icon,notnull,nullzero" json:"icon"`
+	Description   string          `bun:"description,notnull,nullzero" json:"description"`
+	Tradable      bool            `bun:"tradable,notnull,nullzero" json:"tradable"`
+	BuyPrice      string          `bun:"buy_price,notnull,nullzero" json:"buy_price"`
+	SellPrice     string          `bun:"sell_price,notnull,nullzero" json:"sell_price"`
+	CategoryName  string          `bun:"category,notnull" json:"-"`
+	Extra         TemtemItemExtra `bun:"extra,notnull,nullzero,type:jsonb" json:"extra"`
+	Sort          int             `bun:"sort,notnull,nullzero" json:"-"`
+
+	Category *TemtemItemCategory `bun:"rel:belongs-to,join:category=name" json:"category,omitempty"`
+}

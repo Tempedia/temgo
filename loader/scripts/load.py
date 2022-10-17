@@ -7,7 +7,7 @@ from django.db import transaction
 import requests
 import hashlib
 
-from temtem.models import Temtem, TemtemBreedingTechnique, TemtemCourseItem, TemtemCourseTechnique, TemtemLevelingUpTechnique, TemtemLocation, TemtemLocationArea, TemtemStatusCondition, TemtemTechnique, TemtemTrait, Type
+from temtem.models import Temtem, TemtemBreedingTechnique, TemtemCourseItem, TemtemCourseTechnique, TemtemItem, TemtemItemCategory, TemtemLevelingUpTechnique, TemtemLocation, TemtemLocationArea, TemtemStatusCondition, TemtemTechnique, TemtemTrait, Type
 import shutil
 from pathlib import Path
 from bs4 import BeautifulSoup
@@ -378,6 +378,46 @@ def loadCourseItem(path):
         item.save()
 
 
+@transaction.atomic
+def loadItem(path):
+    TemtemItemCategory.objects.all().delete()
+    TemtemItem.objects.all().delete()
+    for i in json.load(open(path)):
+        category = i['category']
+        subcategory = i['subcategory']
+        c = TemtemItemCategory.objects.filter(
+            name=subcategory, parent=category).first()
+        if not c:
+            cc = TemtemItemCategory.objects.filter(name=category).first()
+            if not cc:
+                cc = TemtemItemCategory(
+                    name=category, parent='', sort=i['sort'])
+                cc.save()
+            c = TemtemItemCategory(
+                name=subcategory, parent=cc.name, sort=i['sort'])
+            c.save()
+
+        extra = i.get('extra', {})
+        for k in extra:
+            extra[k] = updateHTML(extra[k]).td.encode_contents().decode()
+
+        item = TemtemItem(
+            name=i['name'],
+            icon=copyfile(i['icon']['path'], filesfolder),
+            description=updateHTML(
+                i['description']).td.encode_contents().decode(),
+            tradable=i.get('tradable', False),
+            buy_price=updateHTML(i['buyPrice']).td.encode_contents(
+            ).decode() if i.get('buyPrice') else '',
+            sell_price=updateHTML(i['sellPrice']).td.encode_contents(
+            ).decode() if i.get('sellPrice') else '',
+            category=c.name,
+            extra=extra,
+            sort=i['sort'],
+        )
+        item.save()
+
+
 def run(*args):
     if len(args) != 1:
         print('load <json data folder>')
@@ -388,6 +428,7 @@ def run(*args):
     loadTemtemTrait(os.path.join(folder, 'trait.json'))
     loadTemtemTechnique(os.path.join(folder, 'technique.json'))
     loadTemtem(os.path.join(folder, 'temtem.json'))
-    # loadLocation(os.path.join(folder, 'location.json'))
+    loadLocation(os.path.join(folder, 'location.json'))
     loadCondition(os.path.join(folder, 'condition.json'))
     loadCourseItem(os.path.join(folder, 'course.json'))
+    loadItem(os.path.join(folder, 'item.json'))

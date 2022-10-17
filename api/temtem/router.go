@@ -42,4 +42,7 @@ func Register(router *echo.Group) {
 
 	/* Search */
 	router.GET("/search", Search)
+
+	/* Item */
+	router.GET("/items", FindTemtemItems)
 }

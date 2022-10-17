@@ -180,3 +180,28 @@ class TemtemCourseItem(models.Model):
 
     class Meta:
         db_table = "temtem_course_item"
+
+
+class TemtemItemCategory(models.Model):
+    name = models.CharField(max_length=64, primary_key=True)
+    parent = models.CharField(max_length=64)
+    sort = models.SmallIntegerField()
+
+    class Meta:
+        db_table = "temtem_item_category"
+
+
+class TemtemItem(models.Model):
+    name = models.CharField(max_length=128, primary_key=True)
+    icon = models.CharField(max_length=1024)
+    description = models.TextField()
+    tradable = models.BooleanField(default=False)
+    buy_price = models.TextField()
+    sell_price = models.TextField()
+
+    category = models.CharField(max_length=64)
+    extra = models.JSONField(default=dict)
+    sort = models.SmallIntegerField()
+
+    class Meta:
+        db_table = "temtem_item"

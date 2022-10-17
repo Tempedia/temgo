@@ -47,3 +47,10 @@ CREATE INDEX ON "temtem_status_condition"("group");
 
 CREATE INDEX ON "temtem_course_item" USING GIN("no" gin_trgm_ops);
 CREATE INDEX ON "temtem_course_item" USING GIN("technique" gin_trgm_ops);
+
+CREATE INDEX ON "temtem_item_category"("parent");
+CREATE INDEX ON "temtem_item_category"("sort");
+
+CREATE INDEX ON "temtem_item" USING GIN("name" gin_trgm_ops);
+CREATE INDEX ON "temtem_item"("category");
+CREATE INDEX ON "temtem_item"("sort");

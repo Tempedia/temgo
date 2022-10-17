@@ -136,5 +136,5 @@ class ItemItem(scrapy.Item):
     sellPrice = scrapy.Field()
     category = scrapy.Field()
     subcategory = scrapy.Field()
-    quest = scrapy.Field()
     extra = scrapy.Field()
+    sort = scrapy.Field()
