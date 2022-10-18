@@ -112,6 +112,8 @@ type Temtem struct {
 	Renders []TemtemGallery `bun:"renders,notnull,nullzero,type:jsonb" json:"renders"`
 
 	Subspecie *TemtemSubspecie `bun:"-" json:"subspecie,omitempty"`
+
+	Techniques map[string]interface{} `bun:"-" json:"techniques,omitempty"`
 }
 
 type TemtemTrait struct {

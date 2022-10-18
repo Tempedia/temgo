@@ -10,12 +10,13 @@ import (
 )
 
 type FindTemtemsRequest struct {
-	Query    string   `json:"query" form:"query" query:"query"`
-	Type     []string `json:"type" form:"type" query:"type"`
-	Trait    string   `json:"trait" form:"trait" query:"trait"`
-	Sort     string   `json:"sort" form:"sort" query:"sort"`
-	Page     int      `json:"page" form:"page" query:"page"`
-	PageSize int      `json:"pageSize" form:"pageSize" query:"pageSize"`
+	Query          string   `json:"query" form:"query" query:"query"`
+	Type           []string `json:"type" form:"type" query:"type"`
+	Trait          string   `json:"trait" form:"trait" query:"trait"`
+	Sort           string   `json:"sort" form:"sort" query:"sort"`
+	Page           int      `json:"page" form:"page" query:"page"`
+	PageSize       int      `json:"pageSize" form:"pageSize" query:"pageSize"`
+	WithTechniques bool     `json:"withTechniques" form:"withTechniques" query:"withTechniques"`
 }
 
 func FindTemtems(c echo.Context) error {
@@ -31,6 +32,32 @@ func FindTemtems(c echo.Context) error {
 	if err != nil {
 		return err
 	}
+
+	if req.WithTechniques {
+		for _, temtem := range temtems {
+			levelingUpTechniques, err := temtemdb.FindTemtemLevelingUpTechniques(temtem.Name)
+			if err != nil {
+				return err
+			}
+
+			courseTechniques, err := temtemdb.FindTemtemCourseTechniques(temtem.Name)
+			if err != nil {
+				return err
+			}
+
+			breedingTechniques, err := temtemdb.FindTemtemBreedingTechniques(temtem.Name)
+			if err != nil {
+				return err
+			}
+
+			temtem.Techniques = map[string]interface{}{
+				"leveling_up": levelingUpTechniques,
+				"course":      courseTechniques,
+				"breeding":    breedingTechniques,
+			}
+		}
+	}
+
 	return ctx.List(temtems, req.Page, req.PageSize, total)
 }
 
