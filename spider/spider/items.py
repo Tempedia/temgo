@@ -41,6 +41,7 @@ class TypeItem(scrapy.Item):
     resistantTo = scrapy.Field()
     weakTo = scrapy.Field()
     trivia = scrapy.Field()
+    color = scrapy.Field()
     sort = scrapy.Field()
 
 

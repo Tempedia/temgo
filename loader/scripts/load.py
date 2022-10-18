@@ -82,6 +82,7 @@ def loadType(path):
             resistant_to=t['resistantTo'],
             weak_to=t['weakTo'],
             sort=t['sort'],
+            color=t['color'],
         )
         tt.save()
 

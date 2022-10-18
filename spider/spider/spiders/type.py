@@ -10,10 +10,12 @@ class TypeSpider(scrapy.Spider):
     start_urls = ['https://temtem.wiki.gg/wiki/Temtem_types']
 
     def parse(self, response):
-        i=0
-        for page in response.css('.mw-parser-output > ul:nth-child(5) > li > a:nth-child(1)'):
-            yield response.follow(page, self.parse_type,meta={'sort':i})
-            i+=1
+        i = 0
+        for li in response.css(r'.mw-parser-output > h2:contains("Types") + p + ul > li'):
+            page = li.css(r':scope > a:nth-child(1)')[0]
+            color = li.css(r':scope > ul li b::text').get('')
+            yield response.follow(page, self.parse_type, meta={'sort': i, 'color': color})
+            i += 1
 
     def parse_type(self, response):
         name = response.css('#firstHeading::text').get().strip()
@@ -53,4 +55,5 @@ class TypeSpider(scrapy.Spider):
             weakTo=weakTo,
             trivia=trivia,
             sort=response.meta['sort'],
+            color=response.meta['color'],
         )

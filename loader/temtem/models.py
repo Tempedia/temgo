@@ -16,6 +16,7 @@ class Type(models.Model):
     weak_to = ArrayField(models.CharField(max_length=64))
 
     sort = models.PositiveSmallIntegerField('sort', db_index=True)
+    color = models.CharField(max_length=32, default='')
 
     class Meta:
         db_table = "temtem_type"
