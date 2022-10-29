@@ -44,19 +44,19 @@ class TypeSpider(scrapy.Spider):
             r'tr.infobox-row th:contains("Catch Rate") + td::text').get().strip())
 
         experienceYieldModifier = float(response.css(
-            r'tr.infobox-row th:contains("Experience Yield Modifier") + td::text').get().strip())
+            r'tr.infobox-row th:contains("Exp Yield Modifier") + td::text').get().strip())
 
         traits = []
         for a in response.css(r'tr.infobox-row th:contains("Traits") + td > a'):
             traits.append(a.css('::text').get().strip())
 
         normalIconSrc = response.css(
-            r'#ttw-temtem > span:nth-child(1) > a:nth-child(1) > img:nth-child(1)::attr(src)').get().strip()
+            r'article.tabber__panel[title=Normal] img::attr(src)').get().strip()
         normalIcon = DownloadImageItem(
             image_url=response.urljoin(normalIconSrc))
 
         lumaIconSrc = response.css(
-            r'#ttw-temtem-luma > span:nth-child(1) > a:nth-child(1) > img:nth-child(1)::attr(src)').get().strip()
+            r'article.tabber__panel[title=Luma] img::attr(src)').get().strip()
         lumaIcon = DownloadImageItem(image_url=response.urljoin(lumaIconSrc))
 
         description = {'Physical Appearance': '', 'Tempedia': ''}
