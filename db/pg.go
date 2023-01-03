@@ -17,7 +17,9 @@ func Init(dsn string, debug bool) error {
 
 	// Create a Bun db on top of it.
 	_db = bun.NewDB(pgdb, pgdialect.New(), bun.WithDiscardUnknownColumns())
-	_db.AddQueryHook(bundebug.NewQueryHook(bundebug.WithVerbose(true)))
+	if debug {
+		_db.AddQueryHook(bundebug.NewQueryHook(bundebug.WithVerbose(true)))
+	}
 
 	return nil
 }
