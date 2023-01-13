@@ -206,7 +206,7 @@ class TypeSpider(scrapy.Spider):
             typeMatchup = extractMatchup(response, None)
         else:   # 分组
             for article in tabs.css('div.tabber article'):
-                group = article.css('::attr(title)').get('').strip()
+                group = article.css('::attr(data-title)').get('').strip()
                 typeMatchup.extend(extractMatchup(article, group))
 
         # 技能
