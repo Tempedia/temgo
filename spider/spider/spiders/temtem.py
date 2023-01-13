@@ -248,7 +248,7 @@ class TypeSpider(scrapy.Spider):
                 techniques['leveling_up'] = extractLevelingUpTechniques(table)
             else:
                 for tab in tabs.css(r'div.tabber article'):
-                    group = tab.css(r'::attr(title)').get('').strip()
+                    group = tab.css(r'::attr(data-title)').get('').strip()
                     table = tab.css(r'table.learnlist')
                     rt = extractLevelingUpTechniques(table, group)
                     techniques['leveling_up'].extend(rt)
@@ -338,7 +338,7 @@ class TypeSpider(scrapy.Spider):
                 r'.mw-parser-output > h3:contains("Renders") + div.koish-tabs')
             if tabs:
                 for tab in tabs.css(r'div.tabber article'):
-                    group = tab.css(r'::attr(title)').get('').strip()
+                    group = tab.css(r'::attr(data-title)').get('').strip()
                     for li in tab.css(r'ul.gallery li'):
                         src = li.css(r'div.thumb a.image::attr(href)').get()
                         if not src:
@@ -355,7 +355,7 @@ class TypeSpider(scrapy.Spider):
         if tabs:
             image_urls = []
             for tab in tabs.css(r'div.tabber article'):
-                group = tab.css(r'::attr(title)').get('').strip()
+                group = tab.css(r'::attr(data-title)').get('').strip()
                 url = tab.css(
                     r'table.wikitable tbody tr:nth-child(2) td:nth-child(1) a::attr(href)').get('')
                 text = 'normal'
