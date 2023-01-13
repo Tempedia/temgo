@@ -16,7 +16,7 @@ class TypeSpider(scrapy.Spider):
             yield response.follow(page, self.parse_temtem)
 
     def parse_temtem(self, response):
-        name = response.css('#firstHeading::text').get().strip()
+        name = response.css('#firstHeading span::text').get().strip()
         no = response.css(
             r'tr.infobox-row th:contains("No.") + td::text').get().strip()
         if not no.startswith('#'):
@@ -51,12 +51,12 @@ class TypeSpider(scrapy.Spider):
             traits.append(a.css('::text').get().strip())
 
         normalIconSrc = response.css(
-            r'article.tabber__panel[title=Normal] img::attr(src)').get().strip()
+            r'article.tabber__panel[data-title=Normal] img::attr(src)').get().strip()
         normalIcon = DownloadImageItem(
             image_url=response.urljoin(normalIconSrc))
 
         lumaIconSrc = response.css(
-            r'article.tabber__panel[title=Luma] img::attr(src)').get().strip()
+            r'article.tabber__panel[data-title=Luma] img::attr(src)').get().strip()
         lumaIcon = DownloadImageItem(image_url=response.urljoin(lumaIconSrc))
 
         description = {'Physical Appearance': '', 'Tempedia': ''}

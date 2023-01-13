@@ -87,9 +87,11 @@ class TechniqueSpider(scrapy.Spider):
         if 'synergyType' in item and item['synergyType']:
             synergy = response.css(
                 r'.infobox-table > tbody> tr:contains("Synergy Details") ~ *')
-            item['synergyVideo'] = DownloadFileItem(
-                file_url=synergy.css('video::attr(src)').get(''),
-            )
+            synergyVideoSrc = synergy.css('video::attr(src)').get('')
+            if synergyVideoSrc:
+                item['synergyVideo'] = DownloadFileItem(
+                    file_url=synergyVideoSrc
+                )
 
             priority = synergy.css(
                 'th:contains("Priority") + td a::attr(title)').get('')

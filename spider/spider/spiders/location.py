@@ -24,7 +24,7 @@ class LocationSpider(scrapy.Spider):
             yield response.follow(page, self.parse_location)
 
     def parse_location(self, response):
-        name = response.css(r'#firstHeading::text').get()
+        name = response.css(r'#firstHeading span::text').get().strip()
         if not name:
             return
         comment = response.css(r'.infobox + table')

@@ -273,7 +273,8 @@ def loadTemtemTechnique(path):
             priority=t['priority'],
             targeting=t['targeting'],
             description=desc,
-            video=copyfile(t['video']['path'], filesfolder),
+            video=copyfile(t['video']['path'],
+                           filesfolder) if 'video' in t else '',
         )
 
         if t.get('synergyType'):
@@ -293,7 +294,7 @@ def loadTemtemTechnique(path):
             technique.synergy_priority = t.get('synergyPriority', -1)
             technique.synergy_targeting = t.get('synergyTargeting', '')
             technique.synergy_video = copyfile(
-                t['synergyVideo']['path'], filesfolder)
+                t['synergyVideo']['path'], filesfolder) if 'synergyVideo' in t else ''
         technique.save()
 
 

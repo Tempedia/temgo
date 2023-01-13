@@ -18,7 +18,7 @@ class TypeSpider(scrapy.Spider):
             i += 1
 
     def parse_type(self, response):
-        name = response.css('#firstHeading::text').get().strip()
+        name = response.css('#firstHeading span::text').get().strip()
         comment = response.css(
             '.mw-parser-output > table:nth-child(2) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(2) > i:nth-child(1)::text').get().strip()
         commentAuthor = response.css(
@@ -39,7 +39,7 @@ class TypeSpider(scrapy.Spider):
         for a in response.css('tr.infobox-row:nth-child(7) > td:nth-child(2) > a'):
             weakTo.append(a.css('::attr(title)').get())
         trivia = []
-        for li in response.css('.mw-parser-output > ul:nth-child(15) > li'):
+        for li in response.css('h2:contains("Trivia") + ul > li'):
             trivia.append(li.get())
 
         icon = DownloadImageItem(image_url=response.urljoin(iconSrc))

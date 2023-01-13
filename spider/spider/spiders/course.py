@@ -7,7 +7,7 @@ from ..items import TechniqueCourseItem
 
 
 class TechniqueCourseSpider(scrapy.Spider):
-    name = 'technique-course'
+    name = 'course'
     start_urls = ['https://temtem.wiki.gg/wiki/Items']
 
     def parse(self, response):
