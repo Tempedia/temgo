@@ -9,6 +9,7 @@ import (
 	"gitlab.com/wiky.lyu/temgo/api/staff"
 	"gitlab.com/wiky.lyu/temgo/api/sys"
 	"gitlab.com/wiky.lyu/temgo/api/temtem"
+	"gitlab.com/wiky.lyu/temgo/api/user"
 )
 
 type CustomValidator struct {
@@ -27,4 +28,5 @@ func Register(e *echo.Echo) {
 	temtem.Register(router.Group("/temtem"))
 	files.Register(router.Group("/files"))
 	google.Register(router.Group("/google"))
+	user.Register(router.Group("/user"))
 }

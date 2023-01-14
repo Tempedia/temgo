@@ -1,6 +1,10 @@
 package temtem
 
-import "github.com/uptrace/bun"
+import (
+	"time"
+
+	"github.com/uptrace/bun"
+)
 
 type TemtemType struct {
 	bun.BaseModel `bun:"table:temtem_type"`
@@ -273,4 +277,14 @@ type TemtemItem struct {
 	Sort          int             `bun:"sort,notnull,nullzero" json:"-"`
 
 	Category *TemtemItemCategory `bun:"rel:belongs-to,join:category=name" json:"category,omitempty"`
+}
+
+type TemtemUserTeam struct {
+	bun.BaseModel `bun:"table:temtem_user_team"`
+	ID            string      `bun:"id,pk,default:gen_random_uuid()" json:"id"`
+	Name          string      `bun:"name,notnull" json:"name"`
+	Temtems       interface{} `bun:"temtems,notnull,type:jsonb" json:"temtems"`
+
+	CreatedAt time.Time `bun:"created_at,notnull" json:"created_at"`
+	UpdatedAt time.Time `bun:"updated_at,notnull" json:"updated_at"`
 }

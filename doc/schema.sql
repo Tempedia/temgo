@@ -1,7 +1,9 @@
-CREATE DATABASE "temgo" WITH ENCODING="UTF-8";
+CREATE DATABASE "temgo" WITH ENCODING = "UTF-8";
 
-\c "temgo";
+\ c "temgo";
+
 CREATE EXTENSION "uuid-ossp";
+
 CREATE EXTENSION "pg_trgm";
 
 /* 内部人员 */
@@ -21,8 +23,11 @@ CREATE TABLE "staff"(
     "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     UNIQUE("username")
 );
+
 CREATE INDEX ON "staff" USING GIN("username" gin_trgm_ops);
+
 CREATE INDEX ON "staff" USING GIN("name" gin_trgm_ops);
+
 CREATE INDEX ON "staff"("status");
 
 CREATE TABLE "staff_token"(
@@ -35,6 +40,19 @@ CREATE TABLE "staff_token"(
     "created_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
-CREATE INDEX ON "staff_token"("staff_id","status");
-CREATE INDEX ON "staff_token"("staff_id","expires_at");
+
+CREATE INDEX ON "staff_token"("staff_id", "status");
+
+CREATE INDEX ON "staff_token"("staff_id", "expires_at");
+
 CREATE INDEX ON "staff_token"("created_at");
+
+CREATE TABLE "temtem_user_team"(
+    "id" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    "name" VARCHAR(256) NOT NULL DEFAULT '',
+    -- 队伍名
+    "temtems" JSONB NOT NULL DEFAULT '[]',
+    --队伍信息
+    "created_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
