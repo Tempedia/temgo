@@ -3,7 +3,7 @@
 import scrapy
 
 from .utils import parseStrList
-from ..items import DownloadFileItem, DownloadImageItem, DownloadImagesItem, TemtemImagesItem, TemtemItem
+from ..items import DownloadFileItem, DownloadImageItem, TemtemImagesItem, TemtemItem
 from scrapy.exceptions import DropItem
 
 

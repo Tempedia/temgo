@@ -1,16 +1,20 @@
 http:
+  host: "https://tempedia.wikylyu.xyz"
   listen: 0.0.0.0:9999
   debug: true
   sesson: "ywe4&u@vCdKi91&Jo3J@14@th8Ae2Np*"
 
+# database config
 db:
   debug: false
   psql:
     dsn: "postgres://postgres@127.0.0.1/temgo?sslmode=disable"
 
+# the file storage path
 files:
   path: "./loader/scripts/files"
 
+# Google Play config
 google:
   play:
     packageName: "xyz.wikylyu.tempedia"

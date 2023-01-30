@@ -20,6 +20,7 @@ import (
 	"gitlab.com/wiky.lyu/temgo/db"
 	"gitlab.com/wiky.lyu/temgo/service/files"
 	"gitlab.com/wiky.lyu/temgo/service/google"
+	"gitlab.com/wiky.lyu/temgo/service/host"
 )
 
 const (
@@ -108,6 +109,7 @@ func initFiles() {
 func main() {
 
 	cfg := struct {
+		Host    string `json:"host" yaml:"host"`
 		Listen  string `json:"listen" yaml:"listen"`
 		Session string `json:"session" yaml:"session"`
 		Debug   bool   `json:"debug" yaml:"debug"`
@@ -122,6 +124,8 @@ func main() {
 	if listen != "" {
 		cfg.Listen = listen
 	}
+
+	host.Init(cfg.Host)
 
 	e := echo.New()
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{

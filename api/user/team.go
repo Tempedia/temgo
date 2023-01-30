@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"gitlab.com/wiky.lyu/temgo/api/middleware"
 	temtemdb "gitlab.com/wiky.lyu/temgo/db/temtem"
+	"gitlab.com/wiky.lyu/temgo/service/host"
 )
 
 type CreateUserTeamRequest struct {
@@ -24,7 +25,7 @@ func CreateTemtemUserTeam(c echo.Context) error {
 		return err
 	}
 	return ctx.Success(map[string]interface{}{
-		"share_url": fmt.Sprintf("https://tempedia.wikylyu.xyz/shared/team/%s", team.ID),
+		"share_url": host.URL(fmt.Sprintf("/shared/team/%s", team.ID)),
 	})
 }
 
