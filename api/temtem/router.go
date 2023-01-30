@@ -2,17 +2,14 @@ package temtem
 
 import (
 	"github.com/labstack/echo/v4"
-	"gitlab.com/wiky.lyu/temgo/api/middleware"
 )
 
 func Register(router *echo.Group) {
-	authRouter := router.Group("", middleware.StaffAuthMiddleware)
 
 	/* 属性 */
 	router.GET("/types", FindTemtemTypes)
 	router.GET("/type/:name", GetTemtemType)
 	router.GET("/type/:name/icon", GetTemtemTypeIcon)
-	authRouter.PUT("/type/:name", UpdateTemtemType)
 
 	/* Temtem */
 	router.GET("/temtems", FindTemtems)

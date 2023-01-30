@@ -6,8 +6,6 @@ import (
 	"gitlab.com/wiky.lyu/temgo/api/files"
 	"gitlab.com/wiky.lyu/temgo/api/google"
 	"gitlab.com/wiky.lyu/temgo/api/middleware"
-	"gitlab.com/wiky.lyu/temgo/api/staff"
-	"gitlab.com/wiky.lyu/temgo/api/sys"
 	"gitlab.com/wiky.lyu/temgo/api/temtem"
 	"gitlab.com/wiky.lyu/temgo/api/user"
 )
@@ -23,8 +21,6 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 func Register(e *echo.Echo) {
 	e.Validator = &CustomValidator{validator: validator.New()}
 	router := e.Group("/api", middleware.APIMiddleware)
-	sys.Register(router.Group("/sys"))
-	staff.Register(router.Group("/staff"))
 	temtem.Register(router.Group("/temtem"))
 	files.Register(router.Group("/files"))
 	google.Register(router.Group("/google"))

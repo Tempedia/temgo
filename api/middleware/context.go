@@ -9,13 +9,10 @@ import (
 
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
-	staffdb "gitlab.com/wiky.lyu/temgo/db/staff"
 )
 
 type Context struct {
 	echo.Context
-
-	Staff *staffdb.Staff
 }
 
 func (c *Context) Param(key string) string {
