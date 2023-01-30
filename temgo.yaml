@@ -14,7 +14,7 @@ db:
 files:
   path: "./loader/scripts/files"
 
-# Google Play config
+# Google Play config.
 google:
   play:
     packageName: "xyz.wikylyu.tempedia"

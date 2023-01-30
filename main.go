@@ -35,7 +35,7 @@ func init() {
 	initLog()
 	initDatabase()
 	initFiles()
-	initGoogle()
+	initGoogle() // if you want to run this program without google play integration, just comment this line.
 }
 
 func initLog() {
@@ -62,20 +62,6 @@ func initGoogle() {
 		panic(err)
 	}
 }
-
-// func initGraylog(instance string) {
-// 	type GraylogConfig struct {
-// 		URL string `json:"url"`
-// 	}
-// 	graylogCfg := GraylogConfig{}
-// 	if err := config.Unmarshal("graylog", &graylogCfg); err != nil {
-// 		panic(err)
-// 	}
-// 	if graylogCfg.URL != "" {
-// 		hook := graylog.NewGraylogHook(graylogCfg.URL, map[string]interface{}{"instance": instance})
-// 		log.AddHook(hook)
-// 	}
-// }
 
 func initDatabase() {
 
