@@ -285,6 +285,6 @@ type TemtemUserTeam struct {
 	Name          string      `bun:"name,notnull" json:"name"`
 	Temtems       interface{} `bun:"temtems,notnull,type:jsonb" json:"temtems"`
 
-	CreatedAt time.Time `bun:"created_at,notnull" json:"created_at"`
-	UpdatedAt time.Time `bun:"updated_at,notnull" json:"updated_at"`
+	CreatedAt time.Time `bun:"created_at,notnull,default:current_timestamp" json:"created_at"`
+	UpdatedAt time.Time `bun:"updated_at,notnull,default:current_timestamp" json:"updated_at"`
 }
