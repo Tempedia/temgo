@@ -19,8 +19,14 @@ This project contains 3 parts.
 
 Be careful, every time you run **Loader**, will overwrite previous data.
 
+*WHY NOT USE DJANGO TO PROVIDER HTTP API?*
 
-## Overall
+*I READLY DON'T KNOW....*
+
+Maybe we should remove **TemGO**, use Django to make this project simpler.
+
+
+## Flow
 
 1. **Spider** fetches Temtem data and save them as JSON.
 2. **Loader** reads JSON data and insert them into database like PostgreSQL.
